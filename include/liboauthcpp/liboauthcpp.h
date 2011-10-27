@@ -87,6 +87,11 @@ public:
                          const std::string& rawData, /* in */
                          std::string& oAuthHttpHeader, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
+    bool getOAuthQueryString( const eOAuthHttpRequestType eType, /* in */
+                         const std::string& rawUrl, /* in */
+                         const std::string& rawData, /* in */
+                         std::string& oAuthQueryString, /* out */
+                         const bool includeOAuthVerifierPin = false /* in */ );
 
     bool extractOAuthTokenKeySecret( const std::string& requestTokenResponse /* in */ );
 
@@ -112,6 +117,15 @@ private:
     bool getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamMap, /* in */
                                           std::string& rawParams, /* out */
                                           const std::string& paramsSeperator /* in */ );
+
+    // Utility for getting OAuth HTTP header or query string
+    bool getOAuthString( const eOAuthHttpRequestType eType, /* in */
+                         const std::string& rawUrl, /* in */
+                         const std::string& rawData, /* in */
+                         const std::string& separator /* in */,
+                         std::string& oAuthString, /* out */
+                         const bool includeOAuthVerifierPin /* in */ );
+
 
     bool getSignature( const eOAuthHttpRequestType eType, /* in */
                        const std::string& rawUrl, /* in */

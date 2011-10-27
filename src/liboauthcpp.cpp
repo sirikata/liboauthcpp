@@ -430,6 +430,45 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
                             std::string& oAuthHttpHeader,
                             const bool includeOAuthVerifierPin )
 {
+
+    bool got_auth_string = getOAuthString(eType, rawUrl, rawData, ",", oAuthHttpHeader, includeOAuthVerifierPin);
+    oAuthHttpHeader = oAuthLibDefaults::OAUTHLIB_AUTHHEADER_STRING + oAuthHttpHeader;
+    return got_auth_string;
+}
+/*++
+* @method: oAuth::getOAuthQueryString
+*
+* @description: this method builds OAuth query string that should be used in
+* HTTP requests to twitter.
+*
+* @note: This omits the ? part to allow you to easily combine it with other
+* query strings.
+*
+* @input: eType - HTTP request type
+*         rawUrl - raw url of the HTTP request
+*         rawData - HTTP data
+*         includeOAuthVerifierPin - flag to indicate whether or not oauth_verifier needs to included
+*                                   in OAuth header
+*
+* @output: oAuthQueryString - OAuth query string
+*
+*--*/
+bool oAuth::getOAuthQueryString( const eOAuthHttpRequestType eType,
+                            const std::string& rawUrl,
+                            const std::string& rawData,
+                            std::string& oAuthQueryString,
+                            const bool includeOAuthVerifierPin )
+{
+    return getOAuthString(eType, rawUrl, rawData, "&", oAuthQueryString, includeOAuthVerifierPin);
+}
+
+bool oAuth::getOAuthString( const eOAuthHttpRequestType eType,
+                            const std::string& rawUrl,
+                            const std::string& rawData,
+                            const std::string& separator,
+                            std::string& oAuthString,
+                            const bool includeOAuthVerifierPin )
+{
     oAuthKeyValuePairs rawKeyValuePairs;
     std::string rawParams;
     std::string oauthSignature;
@@ -437,7 +476,7 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
     std::string pureUrl( rawUrl );
 
     /* Clear header string initially */
-    oAuthHttpHeader.assign( "" );
+    oAuthString = "";
     rawKeyValuePairs.clear();
 
     /* If URL itself contains ?key=value, then extract and put them in map */
@@ -499,14 +538,12 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
     buildOAuthTokenKeyValuePairs( includeOAuthVerifierPin, std::string( "" ), oauthSignature, rawKeyValuePairs, false );
 
     /* Get OAuth header in string format */
-    paramsSeperator = ",";
-    getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, paramsSeperator );
+    getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, separator );
 
     /* Build authorization header */
-    oAuthHttpHeader.assign( oAuthLibDefaults::OAUTHLIB_AUTHHEADER_STRING );
-    oAuthHttpHeader.append( rawParams );
+    oAuthString = rawParams;
 
-    return ( oAuthHttpHeader.length() ) ? true : false;
+    return ( oAuthString.length() ) ? true : false;
 }
 
 /*++
