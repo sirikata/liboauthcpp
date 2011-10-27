@@ -1,0 +1,45 @@
+liboauthcpp
+-----------
+
+liboauthcpp is a pure C++ library for performing OAuth requests. It
+doesn't contain any networking code -- you provide for performing HTTP
+requests yourself, however you like -- instead focusing on performing
+OAuth-specific functionality and providing a nice interface for it.
+If you already have infrastructure for making HTTP requests and are
+looking to add OAuth support, liboauthcpp is for you.
+
+Requirements
+------------
+
+You should only need:
+
+* CMake
+* A C++ compiler for your platform (e.g. g++, Microsoft Visual C++)
+
+Compiling
+---------
+
+The build process is simple:
+
+cd liboauthcpp
+cd build
+cmake .
+make            # or open Visual Studio and build the solution
+
+If your own project uses CMake you can also include
+build/CMakeLists.txt directly into your project and reference the
+target "oauthcpp", a static library, in your project.
+
+License
+-------
+
+liboauthcpp is MIT licensed. See the LICENSE file for more details.
+
+liboauthcpp is mostly taken from libtwitcurl
+(http://code.google.com/p/twitcurl/), which is similarly licensed. It
+mostly serves to isolate the OAuth code from libtwitcurl's Twitter and
+cURL specific code.
+
+libtwitcurl also borrowed code from other projects:
+twitcurl uses HMAC_SHA1 from http://www.codeproject.com/KB/recipes/HMACSHA1class.aspx
+twitcurl uses base64 from http://www.adp-gmbh.ch/cpp/common/base64.html
