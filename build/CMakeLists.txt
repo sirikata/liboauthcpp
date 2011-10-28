@@ -16,6 +16,12 @@ ENDIF(COMMAND CMAKE_POLICY)
 PROJECT(liboauthcpp C CXX)
 ENABLE_LANGUAGE(C)
 
+IF(NOT CMAKE_BUILD_TYPE)
+  SET(CMAKE_BUILD_TYPE Release CACHE STRING
+    "Build types include: Default Debug Release None RelWithDebInfo." FORCE
+    )
+ENDIF()
+
 # Define a few helpful directories
 IF(NOT LIBOAUTHCPP_TOP_LEVEL)
   SET(LIBOAUTHCPP_TOP_LEVEL ${CMAKE_CURRENT_SOURCE_DIR}/..)
