@@ -362,44 +362,7 @@ std::string OAuth::buildOAuthParameterString(
 
         /* Get only key=value data part */
         std::string dataPart = rawUrl.substr( nPos + 1 );
-
-        /* This dataPart can contain many key value pairs: key1=value1&key2=value2&key3=value3 */
-        size_t nSep = std::string::npos;
-        size_t nPos2 = std::string::npos;
-        std::string dataKeyVal;
-        std::string dataKey;
-        std::string dataVal;
-        while( std::string::npos != ( nSep = dataPart.find_first_of("&") ) )
-        {
-            /* Extract first key=value pair */
-            dataKeyVal = dataPart.substr( 0, nSep );
-
-            /* Split them */
-            nPos2 = dataKeyVal.find_first_of( "=" );
-            if( std::string::npos != nPos2 )
-            {
-                dataKey = dataKeyVal.substr( 0, nPos2 );
-                dataVal = dataKeyVal.substr( nPos2 + 1 );
-
-                /* Put this key=value pair in map */
-                rawKeyValuePairs[dataKey] = urlencode( dataVal );
-            }
-            dataPart = dataPart.substr( nSep + 1 );
-        }
-
-        /* For the last key=value */
-        dataKeyVal = dataPart.substr( 0, nSep );
-
-        /* Split them */
-        nPos2 = dataKeyVal.find_first_of( "=" );
-        if( std::string::npos != nPos2 )
-        {
-            dataKey = dataKeyVal.substr( 0, nPos2 );
-            dataVal = dataKeyVal.substr( nPos2 + 1 );
-
-            /* Put this key=value pair in map */
-            rawKeyValuePairs[dataKey] = urlencode( dataVal );
-        }
+        rawKeyValuePairs = ParseKeyValuePairs(dataPart);
     }
 
     /* Build key-value pairs needed for OAuth request token, without signature */
