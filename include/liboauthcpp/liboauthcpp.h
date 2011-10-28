@@ -21,9 +21,6 @@ namespace oAuthLibDefaults
     const std::string OAUTHLIB_TOKENSECRET_KEY = "oauth_token_secret";
     const std::string OAUTHLIB_VERIFIER_KEY = "oauth_verifier";
     const std::string OAUTHLIB_SCREENNAME_KEY = "screen_name";
-    const std::string OAUTHLIB_AUTHENTICITY_TOKEN_KEY = "authenticity_token";
-    const std::string OAUTHLIB_SESSIONUSERNAME_KEY = "session[username_or_email]";
-    const std::string OAUTHLIB_SESSIONPASSWORD_KEY = "session[password]";
 
     const std::string OAUTHLIB_AUTHHEADER_STRING = "Authorization: OAuth ";
 };
