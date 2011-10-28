@@ -4,10 +4,11 @@
 
 /* These are input settings that make this demo actually work -- you need to get
  * these, e.g. by referring to the Twitter documentation and by registering an
- * application with them. Here we have examples from Twitter.
+ * application with them. Here we have examples from Twitter. If you
+ * don't enter any, you'll be prompted to enter them at runtime.
  */
-std::string consumer_key = "my_key_from_twitter";
-std::string consumer_secret = "my_secret_from_twitter";
+std::string consumer_key = ""; // Key from Twitter
+std::string consumer_secret = ""; // Secret from Twitter
 std::string request_token_url = "http://twitter.com/oauth/request_token";
 std::string authorize_url = "http://twitter.com/oauth/authorize";
 std::string access_token_url = "http://twitter.com/oauth/access_token";
@@ -26,6 +27,8 @@ int main(int argc, char** argv) {
 
     // Initialization
     oAuth oauth;
+    if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
+    if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
     oauth.setConsumerKey( consumer_key );
     oauth.setConsumerSecret( consumer_secret );
 
