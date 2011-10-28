@@ -40,9 +40,20 @@ SET(LIBOAUTHCPP_LIB_SOURCES
   )
 ADD_LIBRARY(oauthcpp STATIC ${LIBOAUTHCPP_LIB_SOURCES})
 
-# A simple demo, allowing you to manually perform HTTP steps in a browser
-SET(LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES
-  ${LIBOAUTHCPP_DEMO}/simple_auth.cpp
-)
-ADD_EXECUTABLE(simple_auth ${LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES})
-TARGET_LINK_LIBRARIES(simple_auth oauthcpp)
+# Allow disabling of the demos
+IF(NOT DEFINED LIBOAUTHCPP_BUILD_DEMOS)
+  SET(LIBOAUTHCPP_BUILD_DEMOS TRUE CACHE BOOL "If enabled, builds demos if their dependencies are available.")
+ELSE()
+  SET(LIBOAUTHCPP_BUILD_DEMOS LIBOAUTHCPP_BUILD_DEMOS CACHE BOOL "If enabled, builds demos if their dependencies are available.")
+ENDIF()
+
+IF(LIBOAUTHCPP_BUILD_DEMOS)
+
+  # A simple demo, allowing you to manually perform HTTP steps in a browser
+  SET(LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES
+    ${LIBOAUTHCPP_DEMO}/simple_auth.cpp
+    )
+  ADD_EXECUTABLE(simple_auth ${LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES})
+  TARGET_LINK_LIBRARIES(simple_auth oauthcpp)
+
+ENDIF() #LIBOAUTHCPP_BUILD_DEMOS
