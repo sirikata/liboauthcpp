@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
     OAuth::Consumer consumer(consumer_key, consumer_secret);
-    OAuth::OAuth oauth(consumer);
+    OAuth::OAuth oauth(&consumer);
 
     // Step 1: Get a request token. This is a temporary token that is used for
     // having the user authorize an access token and to sign the request to
@@ -45,26 +45,26 @@ int main(int argc, char** argv) {
 
     // Extract the token and token_secret from the response
     std::string request_token_resp = getUserString("Enter the response:");
-    oauth.extractOAuthTokenKeySecret( request_token_resp );
+    OAuth::Token request_token = oauth.extractToken( request_token_resp );
 
     // Get access token and secret from OAuth object
     std::cout << "Request Token:" << std::endl;
-    std::cout << "    - oauth_token        = " << oauth.getTokenKey() << std::endl;
-    std::cout << "    - oauth_token_secret = " << oauth.getTokenSecret() << std::endl;
+    std::cout << "    - oauth_token        = " << request_token.key() << std::endl;
+    std::cout << "    - oauth_token_secret = " << request_token.secret() << std::endl;
     std::cout << std::endl;
 
     // Step 2: Redirect to the provider. Since this is a CLI script we
     // do not redirect. In a web application you would redirect the
     // user to the URL below.
     std::cout << "Go to the following link in your browser to authorize this application on a user's account:" << std::endl;
-    std::cout << authorize_url << "?oauth_token=" << oauth.getTokenKey() << std::endl;
+    std::cout << authorize_url << "?oauth_token=" << request_token.key() << std::endl;
 
     // After the user has granted access to you, the consumer, the
     // provider will redirect you to whatever URL you have told them
     // to redirect to. You can usually define this in the
     // oauth_callback argument as well.
     std::string pin = getUserString("What is the PIN?");
-    oauth.setPin(pin);
+    request_token.setPin(pin);
 
     // Step 3: Once the consumer has redirected the user back to the
     // oauth_callback URL you can request the access token the user
@@ -73,6 +73,7 @@ int main(int argc, char** argv) {
     // and use the access token returned. You should store the oauth
     // token and token secret somewhere safe, like a database, for
     // future use.
+    oauth = OAuth::OAuth(&consumer, &request_token);
     if (!oauth.getOAuthQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), oAuthQueryString, true ) )
     std::cout << "Enter the following in your browser to get the final access token & secret: " << std::endl;
     std::cout << access_token_url << "?" << oAuthQueryString;
@@ -80,14 +81,18 @@ int main(int argc, char** argv) {
 
     // Once they've come back from the browser, extract the token and token_secret from the response
     std::string access_token_resp = getUserString("Enter the response:");
-    oauth.extractOAuthTokenKeySecret( access_token_resp );
+    OAuth::Token access_token = oauth.extractToken( access_token_resp );
 
     std::cout << "Access token:" << std::endl;
-    std::cout << "    - oauth_token        = " << oauth.getTokenKey() << std::endl;
-    std::cout << "    - oauth_token_secret = " << oauth.getTokenSecret() << std::endl;
+    std::cout << "    - oauth_token        = " << access_token.key() << std::endl;
+    std::cout << "    - oauth_token_secret = " << access_token.secret() << std::endl;
     std::cout << std::endl;
     std::cout << "You may now access protected resources using the access tokens above." << std::endl;
     std::cout << std::endl;
+
+    // E.g., to use the access token, you'd create a new OAuth using
+    // it, discarding the request_token:
+    // oauth = OAuth::OAuth(&consumer, &access_token);
 
     return 0;
 }

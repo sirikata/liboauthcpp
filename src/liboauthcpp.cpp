@@ -28,6 +28,7 @@ namespace Defaults
 };
 
 
+
 Consumer::Consumer(const std::string& key, const std::string& secret)
  : mKey(key), mSecret(secret)
 {
@@ -35,16 +36,27 @@ Consumer::Consumer(const std::string& key, const std::string& secret)
 
 
 
-OAuth::OAuth(const Consumer& consumer)
- : mConsumer(consumer)
+Token::Token(const std::string& key, const std::string& secret)
+ : mKey(key), mSecret(secret)
 {
 }
 
-OAuth::OAuth(const Consumer& consumer,
-    const std::string& tokenKey, const std::string& tokenSecret)
+Token::Token(const std::string& key, const std::string& secret, const std::string& pin)
+ : mKey(key), mSecret(secret), mPin(pin)
+{
+}
+
+
+
+OAuth::OAuth(const Consumer* consumer)
  : mConsumer(consumer),
-   m_tokenKey(tokenKey),
-   m_tokenSecret(tokenSecret)
+   mToken(NULL)
+{
+}
+
+OAuth::OAuth(const Consumer* consumer, const Token* token)
+ : mConsumer(consumer),
+   mToken(token)
 {
 }
 
@@ -153,7 +165,7 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     }
 
     /* Consumer key and its value */
-    keyValueMap[Defaults::CONSUMERKEY_KEY] = mConsumer.key();
+    keyValueMap[Defaults::CONSUMERKEY_KEY] = mConsumer->key();
 
     /* Nonce key and its value */
     keyValueMap[Defaults::NONCE_KEY] = m_nonce;
@@ -171,15 +183,15 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     keyValueMap[Defaults::TIMESTAMP_KEY] = m_timeStamp;
 
     /* Token */
-    if( m_tokenKey.length() )
+    if( mToken && mToken->key().length() )
     {
-        keyValueMap[Defaults::TOKEN_KEY] = m_tokenKey;
+        keyValueMap[Defaults::TOKEN_KEY] = mToken->key();
     }
 
     /* Verifier */
-    if( includeOAuthVerifierPin && m_pin.length() )
+    if( includeOAuthVerifierPin && mToken && mToken->pin().length() )
     {
-        keyValueMap[Defaults::VERIFIER_KEY] = m_pin;
+        keyValueMap[Defaults::VERIFIER_KEY] = mToken->pin();
     }
 
     /* Version */
@@ -272,11 +284,11 @@ bool OAuth::getSignature( const Http::RequestType eType,
     memset( strDigest, 0, Defaults::BUFFSIZE_LARGE );
 
     /* Signing key is composed of consumer_secret&token_secret */
-    secretSigningKey.assign( mConsumer.secret() );
+    secretSigningKey.assign( mConsumer->secret() );
     secretSigningKey.append( "&" );
-    if( m_tokenSecret.length() )
+    if( mToken && mToken->secret().length() )
     {
-        secretSigningKey.append( m_tokenSecret );
+        secretSigningKey.append( mToken->secret() );
     }
 
     objHMACSHA1.HMAC_SHA1( (unsigned char*)sigBase.c_str(),
@@ -492,7 +504,7 @@ bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
 }
 
 /*++
-* @method: OAuth::extractOAuthTokenKeySecret
+* @method: OAuth::extractToken
 *
 * @description: this method extracts oauth token key and secret from
 *               HTTP response
@@ -502,49 +514,50 @@ bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
 * @output: none
 *
 *--*/
-bool OAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse )
-{
-    if( requestTokenResponse.length() )
+Token OAuth::extractToken( const std::string& requestTokenResponse ) {
+    std::string token_key, token_secret;
+
+    if (requestTokenResponse.length() == 0) throw ParseError("Tried to extract token information from empty response.");
+
+    size_t nPos = std::string::npos;
+    std::string strDummy;
+
+    /* Get oauth_token key */
+    nPos = requestTokenResponse.find( Defaults::TOKEN_KEY );
+    if( std::string::npos != nPos )
     {
-        size_t nPos = std::string::npos;
-        std::string strDummy;
-
-        /* Get oauth_token key */
-        nPos = requestTokenResponse.find( Defaults::TOKEN_KEY );
+        nPos = nPos + Defaults::TOKEN_KEY.length() + strlen( "=" );
+        strDummy = requestTokenResponse.substr( nPos );
+        nPos = strDummy.find( "&" );
         if( std::string::npos != nPos )
         {
-            nPos = nPos + Defaults::TOKEN_KEY.length() + strlen( "=" );
-            strDummy = requestTokenResponse.substr( nPos );
-            nPos = strDummy.find( "&" );
-            if( std::string::npos != nPos )
-            {
-                m_tokenKey = strDummy.substr( 0, nPos );
-            }
-        }
-
-        /* Get oauth_token_secret */
-        nPos = requestTokenResponse.find( Defaults::TOKENSECRET_KEY );
-        if( std::string::npos != nPos )
-        {
-            nPos = nPos + Defaults::TOKENSECRET_KEY.length() + strlen( "=" );
-            strDummy = requestTokenResponse.substr( nPos );
-            nPos = strDummy.find( "&" );
-            if( std::string::npos != nPos )
-            {
-                m_tokenSecret = strDummy.substr( 0, nPos );
-            }
-        }
-
-        /* Get screen_name */
-        nPos = requestTokenResponse.find( Defaults::SCREENNAME_KEY );
-        if( std::string::npos != nPos )
-        {
-            nPos = nPos + Defaults::SCREENNAME_KEY.length() + strlen( "=" );
-            strDummy = requestTokenResponse.substr( nPos );
-            m_oAuthScreenName = strDummy;
+            token_key = strDummy.substr( 0, nPos );
         }
     }
-    return true;
+
+    /* Get oauth_token_secret */
+    nPos = requestTokenResponse.find( Defaults::TOKENSECRET_KEY );
+    if( std::string::npos != nPos )
+    {
+        nPos = nPos + Defaults::TOKENSECRET_KEY.length() + strlen( "=" );
+        strDummy = requestTokenResponse.substr( nPos );
+        nPos = strDummy.find( "&" );
+        if( std::string::npos != nPos )
+        {
+            token_secret = strDummy.substr( 0, nPos );
+        }
+    }
+
+    /* Get screen_name */
+    nPos = requestTokenResponse.find( Defaults::SCREENNAME_KEY );
+    if( std::string::npos != nPos )
+    {
+        nPos = nPos + Defaults::SCREENNAME_KEY.length() + strlen( "=" );
+        strDummy = requestTokenResponse.substr( nPos );
+        m_oAuthScreenName = strDummy;
+    }
+
+    return Token(token_key, token_secret);
 }
 
 } // namespace OAuth

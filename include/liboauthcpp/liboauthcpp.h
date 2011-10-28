@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <map>
+#include <stdexcept>
 
 namespace OAuth {
 
@@ -19,6 +20,14 @@ typedef enum _RequestType
 
 typedef std::list<std::string> KeyValueList;
 typedef std::map<std::string, std::string> KeyValuePairs;
+
+
+class ParseError : public std::runtime_error {
+public:
+    ParseError(const std::string msg)
+     : std::runtime_error(msg)
+    {}
+};
 
 /** A consumer of OAuth-protected services. It is the client to an
  *  OAuth service provider and is usually registered with the service
@@ -41,6 +50,36 @@ private:
     const std::string mSecret;
 };
 
+/** An OAuth credential used to request authorization or a protected
+ *  resource.
+ *
+ *  Tokens in OAuth comprise a *key* and a *secret*. The key is
+ *  included in requests to identify the token being used, but the
+ *  secret is used only in the signature, to prove that the requester
+ *  is who the server gave the token to.
+ *
+ *  When first negotiating the authorization, the consumer asks for a
+ *  *request token* that the live user authorizes with the service
+ *  provider. The consumer then exchanges the request token for an
+ *  *access token* that can be used to access protected resources.
+ */
+class Token {
+public:
+    Token(const std::string& key, const std::string& secret);
+    Token(const std::string& key, const std::string& secret, const std::string& pin);
+
+    const std::string& key() const { return mKey; }
+    const std::string& secret() const { return mSecret; }
+
+    const std::string& pin() const { return mPin; }
+    void setPin(const std::string& pin_) { mPin = pin_; }
+
+private:
+    const std::string mKey;
+    const std::string mSecret;
+    std::string mPin;
+};
+
 class OAuth
 {
 public:
@@ -53,27 +92,19 @@ public:
      *  \param consumer Consumer information. The caller must ensure
      *         it remains valid during the lifetime of this object
      */
-    OAuth(const Consumer& consumer);
+    OAuth(const Consumer* consumer);
     /** Construct an OAuth signer with consumer key and secret (yours)
      *  and access token key and secret (acquired and stored during
      *  three-legged authentication).
      *
      *  \param consumer Consumer information. The caller must ensure
      *         it remains valid during the lifetime of this object
+     *  \param token Access token information. The caller must ensure
+     *         it remains valid during the lifetime of this object
      */
-    OAuth(const Consumer& consumer,
-        const std::string& tokenKey, const std::string& tokenSecret);
+    OAuth(const Consumer* consumer, const Token* token);
 
     ~OAuth();
-
-    const std::string& getTokenKey() { return m_tokenKey; }
-    void setTokenKey(const std::string& tokenKey) { m_tokenKey = tokenKey; }
-
-    const std::string& getTokenSecret() { return m_tokenSecret; }
-    void setTokenSecret(const std::string& tokenSecret) { m_tokenSecret = tokenSecret; }
-
-    const std::string& getPin() { return m_pin; }
-    void setPin(const std::string& pin) { m_pin = pin; }
 
     void getOAuthScreenName( std::string& oAuthScreenName /* out */ );
     void setOAuthScreenName( const std::string& oAuthScreenName /* in */ );
@@ -89,7 +120,7 @@ public:
                          std::string& oAuthQueryString, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
 
-    bool extractOAuthTokenKeySecret( const std::string& requestTokenResponse /* in */ );
+    Token extractToken( const std::string& requestTokenResponse /* in */ );
 
 private:
     /** Disable default constructur -- must provide consumer
@@ -98,10 +129,8 @@ private:
     OAuth();
 
     /* OAuth data */
-    const Consumer& mConsumer;
-    std::string m_tokenKey;
-    std::string m_tokenSecret;
-    std::string m_pin;
+    const Consumer* mConsumer;
+    const Token* mToken;
     std::string m_nonce;
     std::string m_timeStamp;
     std::string m_oAuthScreenName;
