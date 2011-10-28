@@ -413,7 +413,7 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
 /*++
 * @method: oAuth::getOAuthHeader
 *
-* @description: this method builds OAuth header that should be used in HTTP requests to twitter
+* @description: this method builds OAuth header that should be used in HTTP requests
 *
 * @input: eType - HTTP request type
 *         rawUrl - raw url of the HTTP request
@@ -439,7 +439,7 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
 * @method: oAuth::getOAuthQueryString
 *
 * @description: this method builds OAuth query string that should be used in
-* HTTP requests to twitter.
+* HTTP requests.
 *
 * @note: This omits the ? part to allow you to easily combine it with other
 * query strings.
@@ -611,9 +611,9 @@ bool oAuth::getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamM
 * @method: oAuth::extractOAuthTokenKeySecret
 *
 * @description: this method extracts oauth token key and secret from
-*               twitter's HTTP response
+*               HTTP response
 *
-* @input: requestTokenResponse - response from twitter
+* @input: requestTokenResponse - response from OAuth server
 *
 * @output: none
 *

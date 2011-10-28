@@ -29,21 +29,8 @@ namespace oAuthLibDefaults
     const std::string OAUTHLIB_AUTHENTICITY_TOKEN_KEY = "authenticity_token";
     const std::string OAUTHLIB_SESSIONUSERNAME_KEY = "session[username_or_email]";
     const std::string OAUTHLIB_SESSIONPASSWORD_KEY = "session[password]";
-    const std::string OAUTHLIB_AUTHENTICITY_TOKEN_TWITTER_RESP_KEY = "authenticity_token\" type=\"hidden\" value=\"";
-    const std::string OAUTHLIB_TOKEN_TWITTER_RESP_KEY = "oauth_token\" type=\"hidden\" value=\"";
-    const std::string OAUTHLIB_PIN_TWITTER_RESP_KEY = "code-desc\"><code>";
-    const std::string OAUTHLIB_TOKEN_END_TAG_TWITTER_RESP = "\" />";
-    const std::string OAUTHLIB_PIN_END_TAG_TWITTER_RESP = "</code>";
 
     const std::string OAUTHLIB_AUTHHEADER_STRING = "Authorization: OAuth ";
-};
-
-namespace oAuthTwitterApiUrls
-{
-    /* Twitter OAuth API URLs */
-    const std::string OAUTHLIB_TWITTER_REQUEST_TOKEN_URL = "http://twitter.com/oauth/request_token";
-    const std::string OAUTHLIB_TWITTER_AUTHORIZE_URL = "http://twitter.com/oauth/authorize?oauth_token=";
-    const std::string OAUTHLIB_TWITTER_ACCESS_TOKEN_URL = "http://twitter.com/oauth/access_token";
 };
 
 typedef enum _eOAuthHttpRequestType
@@ -107,7 +94,7 @@ private:
     std::string m_timeStamp;
     std::string m_oAuthScreenName;
 
-    /* OAuth twitter related utility methods */
+    /* OAuth related utility methods */
     bool buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin, /* in */
                                        const std::string& rawData, /* in */
                                        const std::string& oauthSignature, /* in */
