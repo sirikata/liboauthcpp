@@ -27,19 +27,25 @@ namespace Defaults
     const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
 };
 
-/*++
-* @method: OAutho::OAuth
-*
-* @description: constructor
-*
-* @input: none
-*
-* @output: none
-*
-*--*/
 OAuth::OAuth()
 {
 }
+
+OAuth::OAuth(const std::string& consumerKey, const std::string& consumerSecret)
+ : m_consumerKey(consumerKey),
+   m_consumerSecret(consumerSecret)
+{
+}
+
+OAuth::OAuth(const std::string& consumerKey, const std::string& consumerSecret,
+    const std::string& tokenKey, const std::string& tokenSecret)
+ : m_consumerKey(consumerKey),
+   m_consumerSecret(consumerSecret),
+   m_tokenKey(tokenKey),
+   m_tokenSecret(tokenSecret)
+{
+}
+
 
 /*++
 * @method: OAuth::~OAuth
@@ -55,125 +61,7 @@ OAuth::~OAuth()
 {
 }
 
-/*++
-* @method: OAuth::getConsumerKey
-*
-* @description: this method gives consumer key that is being used currently
-*
-* @input: none
-*
-* @output: consumer key
-*
-*--*/
-void OAuth::getConsumerKey( std::string& consumerKey )
-{
-    consumerKey = m_consumerKey;
-}
 
-/*++
-* @method: OAuth::setConsumerKey
-*
-* @description: this method saves consumer key that should be used
-*
-* @input: consumer key
-*
-* @output: none
-*
-*--*/
-void OAuth::setConsumerKey( const std::string& consumerKey )
-{
-    m_consumerKey.assign( consumerKey );
-}
-
-/*++
-* @method: OAuth::getConsumerSecret
-*
-* @description: this method gives consumer secret that is being used currently
-*
-* @input: none
-*
-* @output: consumer secret
-*
-*--*/
-void OAuth::getConsumerSecret( std::string& consumerSecret )
-{
-    consumerSecret = m_consumerSecret;
-}
-
-/*++
-* @method: OAuth::setConsumerSecret
-*
-* @description: this method saves consumer secret that should be used
-*
-* @input: consumer secret
-*
-* @output: none
-*
-*--*/
-void OAuth::setConsumerSecret( const std::string& consumerSecret )
-{
-    m_consumerSecret = consumerSecret;
-}
-
-/*++
-* @method: OAuth::getOAuthTokenKey
-*
-* @description: this method gives OAuth token (also called access token) that is being used currently
-*
-* @input: none
-*
-* @output: OAuth token
-*
-*--*/
-void OAuth::getOAuthTokenKey( std::string& oAuthTokenKey )
-{
-    oAuthTokenKey = m_oAuthTokenKey;
-}
-
-/*++
-* @method: OAuth::setOAuthTokenKey
-*
-* @description: this method saves OAuth token that should be used
-*
-* @input: OAuth token
-*
-* @output: none
-*
-*--*/
-void OAuth::setOAuthTokenKey( const std::string& oAuthTokenKey )
-{
-    m_oAuthTokenKey = oAuthTokenKey;
-}
-
-/*++
-* @method: OAuth::getOAuthTokenSecret
-*
-* @description: this method gives OAuth token secret that is being used currently
-*
-* @input: none
-*
-* @output: OAuth token secret
-*
-*--*/
-void OAuth::getOAuthTokenSecret( std::string& oAuthTokenSecret )
-{
-    oAuthTokenSecret = m_oAuthTokenSecret;
-}
-
-/*++
-* @method: OAuth::setOAuthTokenSecret
-*
-* @description: this method saves OAuth token that should be used
-*
-* @input: OAuth token secret
-*
-* @output: none
-*
-*--*/
-void OAuth::setOAuthTokenSecret( const std::string& oAuthTokenSecret )
-{
-    m_oAuthTokenSecret = oAuthTokenSecret;
-}
 
 /*++
 * @method: OAuth::getOAuthScreenName
@@ -203,36 +91,6 @@ void OAuth::getOAuthScreenName( std::string& oAuthScreenName )
 void OAuth::setOAuthScreenName( const std::string& oAuthScreenName )
 {
     m_oAuthScreenName = oAuthScreenName;
-}
-
-/*++
-* @method: OAuth::getOAuthPin
-*
-* @description: this method gives OAuth verifier PIN
-*
-* @input: none
-*
-* @output: OAuth verifier PIN
-*
-*--*/
-void OAuth::getOAuthPin( std::string& oAuthPin )
-{
-    oAuthPin = m_oAuthPin;
-}
-
-/*++
-* @method: OAuth::setOAuthPin
-*
-* @description: this method sets OAuth verifier PIN
-*
-* @input: OAuth verifier PIN
-*
-* @output: none
-*
-*--*/
-void OAuth::setOAuthPin( const std::string& oAuthPin )
-{
-    m_oAuthPin = oAuthPin;
 }
 
 /*++
@@ -311,15 +169,15 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     keyValueMap[Defaults::TIMESTAMP_KEY] = m_timeStamp;
 
     /* Token */
-    if( m_oAuthTokenKey.length() )
+    if( m_tokenKey.length() )
     {
-        keyValueMap[Defaults::TOKEN_KEY] = m_oAuthTokenKey;
+        keyValueMap[Defaults::TOKEN_KEY] = m_tokenKey;
     }
 
     /* Verifier */
-    if( includeOAuthVerifierPin && m_oAuthPin.length() )
+    if( includeOAuthVerifierPin && m_pin.length() )
     {
-        keyValueMap[Defaults::VERIFIER_KEY] = m_oAuthPin;
+        keyValueMap[Defaults::VERIFIER_KEY] = m_pin;
     }
 
     /* Version */
@@ -414,9 +272,9 @@ bool OAuth::getSignature( const Http::RequestType eType,
     /* Signing key is composed of consumer_secret&token_secret */
     secretSigningKey.assign( m_consumerSecret );
     secretSigningKey.append( "&" );
-    if( m_oAuthTokenSecret.length() )
+    if( m_tokenSecret.length() )
     {
-        secretSigningKey.append( m_oAuthTokenSecret );
+        secretSigningKey.append( m_tokenSecret );
     }
 
     objHMACSHA1.HMAC_SHA1( (unsigned char*)sigBase.c_str(),
@@ -658,7 +516,7 @@ bool OAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse 
             nPos = strDummy.find( "&" );
             if( std::string::npos != nPos )
             {
-                m_oAuthTokenKey = strDummy.substr( 0, nPos );
+                m_tokenKey = strDummy.substr( 0, nPos );
             }
         }
 
@@ -671,7 +529,7 @@ bool OAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse 
             nPos = strDummy.find( "&" );
             if( std::string::npos != nPos )
             {
-                m_oAuthTokenSecret = strDummy.substr( 0, nPos );
+                m_tokenSecret = strDummy.substr( 0, nPos );
             }
         }
 

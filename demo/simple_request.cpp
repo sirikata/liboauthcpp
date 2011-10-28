@@ -26,17 +26,13 @@ std::string getUserString(std::string prompt) {
 
 int main(int argc, char** argv) {
     // Initialization
-    OAuth::OAuth oauth;
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
-    oauth.setConsumerKey( consumer_key );
-    oauth.setConsumerSecret( consumer_secret );
     // We assume you have gotten the access token. You may have e.g., used
     // simple_auth to get it.
     if (oauth_token.empty()) oauth_token = getUserString("Enter access token:");
     if (oauth_token_secret.empty()) oauth_token_secret = getUserString("Enter access token secret:");
-    oauth.setOAuthTokenKey( oauth_token );
-    oauth.setOAuthTokenSecret( oauth_token_secret );
+    OAuth::OAuth oauth(consumer_key, consumer_secret, oauth_token, oauth_token_secret);
 
     // Get the query string. Note that we pass in the URL as if we were , but
     // *the output query string includes the parameters you passed in*. Below,
