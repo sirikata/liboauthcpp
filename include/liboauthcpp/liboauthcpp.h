@@ -1,11 +1,6 @@
 #ifndef __OAUTHLIB_H__
 #define __OAUTHLIB_H__
 
-#include "time.h"
-#include <cstdlib>
-#include <sstream>
-#include <iostream>
-#include <fstream>
 #include <string>
 #include <list>
 #include <map>
