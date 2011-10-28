@@ -44,7 +44,7 @@ int main(int argc, char** argv) {
     std::string request_token_resp = getUserString("Enter the response:");
     // This time we pass the response directly and have the library do the
     // parsing (see next extractToken call for alternative)
-    OAuth::Token request_token = oauth.extractToken( request_token_resp );
+    OAuth::Token request_token = OAuth::Token::extract( request_token_resp );
 
     // Get access token and secret from OAuth object
     std::cout << "Request Token:" << std::endl;
@@ -86,7 +86,7 @@ int main(int argc, char** argv) {
     // can extract additional keys that are sent back, in the case of twitter,
     // the screen_name
     OAuth::KeyValuePairs access_token_resp_data = OAuth::ParseKeyValuePairs(access_token_resp);
-    OAuth::Token access_token = oauth.extractToken( access_token_resp_data );
+    OAuth::Token access_token = OAuth::Token::extract( access_token_resp_data );
 
     std::cout << "Access token:" << std::endl;
     std::cout << "    - oauth_token        = " << access_token.key() << std::endl;

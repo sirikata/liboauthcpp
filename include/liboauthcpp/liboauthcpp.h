@@ -81,6 +81,16 @@ public:
     Token(const std::string& key, const std::string& secret);
     Token(const std::string& key, const std::string& secret, const std::string& pin);
 
+    /** Construct a token, extracting the key and secret from a set of
+     *  key-value pairs (e.g. those parsed from an request or access
+     *  token request).
+     */
+    static Token extract(const KeyValuePairs& response);
+    /** Construct a token, extracting the key and secret from a raw,
+     *  encoded response.
+     */
+    static Token extract(const std::string& requestTokenResponse);
+
     const std::string& key() const { return mKey; }
     const std::string& secret() const { return mSecret; }
 
@@ -88,6 +98,7 @@ public:
     void setPin(const std::string& pin_) { mPin = pin_; }
 
 private:
+
     const std::string mKey;
     const std::string mSecret;
     std::string mPin;
@@ -144,10 +155,6 @@ public:
                          const std::string& rawUrl,
                          const std::string& rawData = "",
                          const bool includeOAuthVerifierPin = false);
-
-    Token extractToken( const KeyValuePairs& response );
-    Token extractToken( const std::string& requestTokenResponse /* in */ );
-
 private:
     /** Disable default constructur -- must provide consumer
      * information.

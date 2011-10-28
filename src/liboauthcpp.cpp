@@ -80,6 +80,27 @@ Token::Token(const std::string& key, const std::string& secret, const std::strin
 {
 }
 
+Token Token::extract(const std::string& response) {
+    return Token::extract(response);
+}
+
+Token Token::extract(const KeyValuePairs& response) {
+    std::string token_key, token_secret;
+
+    KeyValuePairs::const_iterator it = response.find(Defaults::TOKEN_KEY);
+    if (it == response.end())
+        throw MissingKeyError("Couldn't find oauth_token in response");
+    token_key = it->second;
+
+    it = response.find(Defaults::TOKENSECRET_KEY);
+    if (it == response.end())
+        throw MissingKeyError("Couldn't find oauth_token_secret in response");
+    token_secret = it->second;
+
+    return Token(token_key, token_secret);
+}
+
+
 
 
 OAuth::OAuth(const Consumer* consumer)
@@ -458,34 +479,5 @@ bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
     return ( rawParams.length() ) ? true : false;
 }
 
-/*++
-* @method: OAuth::extractToken
-*
-* @description: this method extracts oauth token key and secret from
-*               HTTP response
-*
-* @input: requestTokenResponse - response from OAuth server
-*
-* @output: none
-*
-*--*/
-Token OAuth::extractToken( const std::string& response ) {
-    return extractToken(ParseKeyValuePairs(response));
-}
-Token OAuth::extractToken( const KeyValuePairs& response ) {
-    std::string token_key, token_secret;
-
-    KeyValuePairs::const_iterator it = response.find(Defaults::TOKEN_KEY);
-    if (it == response.end())
-        throw MissingKeyError("Couldn't find oauth_token in response");
-    token_key = it->second;
-
-    it = response.find(Defaults::TOKENSECRET_KEY);
-    if (it == response.end())
-        throw MissingKeyError("Couldn't find oauth_token_secret in response");
-    token_secret = it->second;
-
-    return Token(token_key, token_secret);
-}
 
 } // namespace OAuth
