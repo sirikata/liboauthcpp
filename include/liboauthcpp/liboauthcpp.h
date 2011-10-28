@@ -1,46 +1,30 @@
-#ifndef __OAUTHLIB_H__
-#define __OAUTHLIB_H__
+#ifndef __LIBOAUTHCPP_LIBOAUTHCPP_H__
+#define __LIBOAUTHCPP_LIBOAUTHCPP_H__
 
 #include <string>
 #include <list>
 #include <map>
 
-namespace oAuthLibDefaults
+namespace OAuth {
+
+namespace Http {
+typedef enum _RequestType
 {
-    /* Constants */
-    const int OAUTHLIB_BUFFSIZE = 1024;
-    const int OAUTHLIB_BUFFSIZE_LARGE = 1024;
-    const std::string OAUTHLIB_CONSUMERKEY_KEY = "oauth_consumer_key";
-    const std::string OAUTHLIB_CALLBACK_KEY = "oauth_callback";
-    const std::string OAUTHLIB_VERSION_KEY = "oauth_version";
-    const std::string OAUTHLIB_SIGNATUREMETHOD_KEY = "oauth_signature_method";
-    const std::string OAUTHLIB_SIGNATURE_KEY = "oauth_signature";
-    const std::string OAUTHLIB_TIMESTAMP_KEY = "oauth_timestamp";
-    const std::string OAUTHLIB_NONCE_KEY = "oauth_nonce";
-    const std::string OAUTHLIB_TOKEN_KEY = "oauth_token";
-    const std::string OAUTHLIB_TOKENSECRET_KEY = "oauth_token_secret";
-    const std::string OAUTHLIB_VERIFIER_KEY = "oauth_verifier";
-    const std::string OAUTHLIB_SCREENNAME_KEY = "screen_name";
+    Invalid = 0,
+    Get,
+    Post,
+    Delete
+} RequestType;
+} // namespace Http
 
-    const std::string OAUTHLIB_AUTHHEADER_STRING = "Authorization: OAuth ";
-};
+typedef std::list<std::string> KeyValueList;
+typedef std::map<std::string, std::string> KeyValuePairs;
 
-typedef enum _eOAuthHttpRequestType
-{
-    eOAuthHttpInvalid = 0,
-    eOAuthHttpGet,
-    eOAuthHttpPost,
-    eOAuthHttpDelete
-} eOAuthHttpRequestType;
-
-typedef std::list<std::string> oAuthKeyValueList;
-typedef std::map<std::string, std::string> oAuthKeyValuePairs;
-
-class oAuth
+class OAuth
 {
 public:
-    oAuth();
-    ~oAuth();
+    OAuth();
+    ~OAuth();
 
     /* OAuth public methods used by twitCurl */
     void getConsumerKey( std::string& consumerKey /* out */ );
@@ -61,12 +45,12 @@ public:
     void getOAuthPin( std::string& oAuthPin /* out */ );
     void setOAuthPin( const std::string& oAuthPin /* in */ );
 
-    bool getOAuthHeader( const eOAuthHttpRequestType eType, /* in */
+    bool getOAuthHeader( const Http::RequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */
                          std::string& oAuthHttpHeader, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
-    bool getOAuthQueryString( const eOAuthHttpRequestType eType, /* in */
+    bool getOAuthQueryString( const Http::RequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */
                          std::string& oAuthQueryString, /* out */
@@ -90,15 +74,15 @@ private:
     bool buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin, /* in */
                                        const std::string& rawData, /* in */
                                        const std::string& oauthSignature, /* in */
-                                       oAuthKeyValuePairs& keyValueMap /* out */,
+                                       KeyValuePairs& keyValueMap /* out */,
                                        const bool generateTimestamp /* in */ );
 
-    bool getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamMap, /* in */
+    bool getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap, /* in */
                                           std::string& rawParams, /* out */
                                           const std::string& paramsSeperator /* in */ );
 
     // Utility for getting OAuth HTTP header or query string
-    bool getOAuthString( const eOAuthHttpRequestType eType, /* in */
+    bool getOAuthString( const Http::RequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */
                          const std::string& separator /* in */,
@@ -106,12 +90,14 @@ private:
                          const bool includeOAuthVerifierPin /* in */ );
 
 
-    bool getSignature( const eOAuthHttpRequestType eType, /* in */
+    bool getSignature( const Http::RequestType eType, /* in */
                        const std::string& rawUrl, /* in */
-                       const oAuthKeyValuePairs& rawKeyValuePairs, /* in */
+                       const KeyValuePairs& rawKeyValuePairs, /* in */
                        std::string& oAuthSignature /* out */ );
 
     void generateNonceTimeStamp();
 };
 
-#endif // __OAUTHLIB_H__
+} // namespace OAuth
+
+#endif // __LIBOAUTHCPP_LIBOAUTHCPP_H__

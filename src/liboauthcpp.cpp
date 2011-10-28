@@ -5,8 +5,30 @@
 #include <cstdlib>
 #include <ctime>
 
+namespace OAuth {
+
+namespace Defaults
+{
+    /* Constants */
+    const int BUFFSIZE = 1024;
+    const int BUFFSIZE_LARGE = 1024;
+    const std::string CONSUMERKEY_KEY = "oauth_consumer_key";
+    const std::string CALLBACK_KEY = "oauth_callback";
+    const std::string VERSION_KEY = "oauth_version";
+    const std::string SIGNATUREMETHOD_KEY = "oauth_signature_method";
+    const std::string SIGNATURE_KEY = "oauth_signature";
+    const std::string TIMESTAMP_KEY = "oauth_timestamp";
+    const std::string NONCE_KEY = "oauth_nonce";
+    const std::string TOKEN_KEY = "oauth_token";
+    const std::string TOKENSECRET_KEY = "oauth_token_secret";
+    const std::string VERIFIER_KEY = "oauth_verifier";
+    const std::string SCREENNAME_KEY = "screen_name";
+
+    const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
+};
+
 /*++
-* @method: oAuth::oAuth
+* @method: OAutho::OAuth
 *
 * @description: constructor
 *
@@ -15,12 +37,12 @@
 * @output: none
 *
 *--*/
-oAuth::oAuth()
+OAuth::OAuth()
 {
 }
 
 /*++
-* @method: oAuth::~oAuth
+* @method: OAuth::~OAuth
 *
 * @description: destructor
 *
@@ -29,12 +51,12 @@ oAuth::oAuth()
 * @output: none
 *
 *--*/
-oAuth::~oAuth()
+OAuth::~OAuth()
 {
 }
 
 /*++
-* @method: oAuth::getConsumerKey
+* @method: OAuth::getConsumerKey
 *
 * @description: this method gives consumer key that is being used currently
 *
@@ -43,13 +65,13 @@ oAuth::~oAuth()
 * @output: consumer key
 *
 *--*/
-void oAuth::getConsumerKey( std::string& consumerKey )
+void OAuth::getConsumerKey( std::string& consumerKey )
 {
     consumerKey = m_consumerKey;
 }
 
 /*++
-* @method: oAuth::setConsumerKey
+* @method: OAuth::setConsumerKey
 *
 * @description: this method saves consumer key that should be used
 *
@@ -58,13 +80,13 @@ void oAuth::getConsumerKey( std::string& consumerKey )
 * @output: none
 *
 *--*/
-void oAuth::setConsumerKey( const std::string& consumerKey )
+void OAuth::setConsumerKey( const std::string& consumerKey )
 {
     m_consumerKey.assign( consumerKey );
 }
 
 /*++
-* @method: oAuth::getConsumerSecret
+* @method: OAuth::getConsumerSecret
 *
 * @description: this method gives consumer secret that is being used currently
 *
@@ -73,13 +95,13 @@ void oAuth::setConsumerKey( const std::string& consumerKey )
 * @output: consumer secret
 *
 *--*/
-void oAuth::getConsumerSecret( std::string& consumerSecret )
+void OAuth::getConsumerSecret( std::string& consumerSecret )
 {
     consumerSecret = m_consumerSecret;
 }
 
 /*++
-* @method: oAuth::setConsumerSecret
+* @method: OAuth::setConsumerSecret
 *
 * @description: this method saves consumer secret that should be used
 *
@@ -88,13 +110,13 @@ void oAuth::getConsumerSecret( std::string& consumerSecret )
 * @output: none
 *
 *--*/
-void oAuth::setConsumerSecret( const std::string& consumerSecret )
+void OAuth::setConsumerSecret( const std::string& consumerSecret )
 {
     m_consumerSecret = consumerSecret;
 }
 
 /*++
-* @method: oAuth::getOAuthTokenKey
+* @method: OAuth::getOAuthTokenKey
 *
 * @description: this method gives OAuth token (also called access token) that is being used currently
 *
@@ -103,13 +125,13 @@ void oAuth::setConsumerSecret( const std::string& consumerSecret )
 * @output: OAuth token
 *
 *--*/
-void oAuth::getOAuthTokenKey( std::string& oAuthTokenKey )
+void OAuth::getOAuthTokenKey( std::string& oAuthTokenKey )
 {
     oAuthTokenKey = m_oAuthTokenKey;
 }
 
 /*++
-* @method: oAuth::setOAuthTokenKey
+* @method: OAuth::setOAuthTokenKey
 *
 * @description: this method saves OAuth token that should be used
 *
@@ -118,13 +140,13 @@ void oAuth::getOAuthTokenKey( std::string& oAuthTokenKey )
 * @output: none
 *
 *--*/
-void oAuth::setOAuthTokenKey( const std::string& oAuthTokenKey )
+void OAuth::setOAuthTokenKey( const std::string& oAuthTokenKey )
 {
     m_oAuthTokenKey = oAuthTokenKey;
 }
 
 /*++
-* @method: oAuth::getOAuthTokenSecret
+* @method: OAuth::getOAuthTokenSecret
 *
 * @description: this method gives OAuth token secret that is being used currently
 *
@@ -133,13 +155,13 @@ void oAuth::setOAuthTokenKey( const std::string& oAuthTokenKey )
 * @output: OAuth token secret
 *
 *--*/
-void oAuth::getOAuthTokenSecret( std::string& oAuthTokenSecret )
+void OAuth::getOAuthTokenSecret( std::string& oAuthTokenSecret )
 {
     oAuthTokenSecret = m_oAuthTokenSecret;
 }
 
 /*++
-* @method: oAuth::setOAuthTokenSecret
+* @method: OAuth::setOAuthTokenSecret
 *
 * @description: this method saves OAuth token that should be used
 *
@@ -148,13 +170,13 @@ void oAuth::getOAuthTokenSecret( std::string& oAuthTokenSecret )
 * @output: none
 *
 *--*/
-void oAuth::setOAuthTokenSecret( const std::string& oAuthTokenSecret )
+void OAuth::setOAuthTokenSecret( const std::string& oAuthTokenSecret )
 {
     m_oAuthTokenSecret = oAuthTokenSecret;
 }
 
 /*++
-* @method: oAuth::getOAuthScreenName
+* @method: OAuth::getOAuthScreenName
 *
 * @description: this method gives authorized user's screenname
 *
@@ -163,13 +185,13 @@ void oAuth::setOAuthTokenSecret( const std::string& oAuthTokenSecret )
 * @output: screen name
 *
 *--*/
-void oAuth::getOAuthScreenName( std::string& oAuthScreenName )
+void OAuth::getOAuthScreenName( std::string& oAuthScreenName )
 {
     oAuthScreenName = m_oAuthScreenName;
 }
 
 /*++
-* @method: oAuth::setOAuthScreenName
+* @method: OAuth::setOAuthScreenName
 *
 * @description: this method sets authorized user's screenname
 *
@@ -178,13 +200,13 @@ void oAuth::getOAuthScreenName( std::string& oAuthScreenName )
 * @output: none
 *
 *--*/
-void oAuth::setOAuthScreenName( const std::string& oAuthScreenName )
+void OAuth::setOAuthScreenName( const std::string& oAuthScreenName )
 {
     m_oAuthScreenName = oAuthScreenName;
 }
 
 /*++
-* @method: oAuth::getOAuthPin
+* @method: OAuth::getOAuthPin
 *
 * @description: this method gives OAuth verifier PIN
 *
@@ -193,13 +215,13 @@ void oAuth::setOAuthScreenName( const std::string& oAuthScreenName )
 * @output: OAuth verifier PIN
 *
 *--*/
-void oAuth::getOAuthPin( std::string& oAuthPin )
+void OAuth::getOAuthPin( std::string& oAuthPin )
 {
     oAuthPin = m_oAuthPin;
 }
 
 /*++
-* @method: oAuth::setOAuthPin
+* @method: OAuth::setOAuthPin
 *
 * @description: this method sets OAuth verifier PIN
 *
@@ -208,13 +230,13 @@ void oAuth::getOAuthPin( std::string& oAuthPin )
 * @output: none
 *
 *--*/
-void oAuth::setOAuthPin( const std::string& oAuthPin )
+void OAuth::setOAuthPin( const std::string& oAuthPin )
 {
     m_oAuthPin = oAuthPin;
 }
 
 /*++
-* @method: oAuth::generateNonceTimeStamp
+* @method: OAuth::generateNonceTimeStamp
 *
 * @description: this method generates nonce and timestamp for OAuth header
 *
@@ -225,12 +247,12 @@ void oAuth::setOAuthPin( const std::string& oAuthPin )
 * @remarks: internal method
 *
 *--*/
-void oAuth::generateNonceTimeStamp()
+void OAuth::generateNonceTimeStamp()
 {
-    char szTime[oAuthLibDefaults::OAUTHLIB_BUFFSIZE];
-    char szRand[oAuthLibDefaults::OAUTHLIB_BUFFSIZE];
-    memset( szTime, 0, oAuthLibDefaults::OAUTHLIB_BUFFSIZE );
-    memset( szRand, 0, oAuthLibDefaults::OAUTHLIB_BUFFSIZE );
+    char szTime[Defaults::BUFFSIZE];
+    char szRand[Defaults::BUFFSIZE];
+    memset( szTime, 0, Defaults::BUFFSIZE );
+    memset( szRand, 0, Defaults::BUFFSIZE );
     srand( time( NULL ) );
     sprintf( szRand, "%x", rand()%1000 );
     sprintf( szTime, "%ld", time( NULL ) );
@@ -241,7 +263,7 @@ void oAuth::generateNonceTimeStamp()
 }
 
 /*++
-* @method: oAuth::buildOAuthTokenKeyValuePairs
+* @method: OAuth::buildOAuthTokenKeyValuePairs
 *
 * @description: this method prepares key-value pairs required for OAuth header
 *               and signature generation.
@@ -258,10 +280,10 @@ void oAuth::generateNonceTimeStamp()
 * @remarks: internal method
 *
 *--*/
-bool oAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
+bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
                                           const std::string& rawData,
                                           const std::string& oauthSignature,
-                                          oAuthKeyValuePairs& keyValueMap,
+                                          KeyValuePairs& keyValueMap,
                                           const bool generateTimestamp )
 {
     /* Generate nonce and timestamp if required */
@@ -271,37 +293,37 @@ bool oAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     }
 
     /* Consumer key and its value */
-    keyValueMap[oAuthLibDefaults::OAUTHLIB_CONSUMERKEY_KEY] = m_consumerKey;
+    keyValueMap[Defaults::CONSUMERKEY_KEY] = m_consumerKey;
 
     /* Nonce key and its value */
-    keyValueMap[oAuthLibDefaults::OAUTHLIB_NONCE_KEY] = m_nonce;
+    keyValueMap[Defaults::NONCE_KEY] = m_nonce;
 
     /* Signature if supplied */
     if( oauthSignature.length() )
     {
-        keyValueMap[oAuthLibDefaults::OAUTHLIB_SIGNATURE_KEY] = oauthSignature;
+        keyValueMap[Defaults::SIGNATURE_KEY] = oauthSignature;
     }
 
     /* Signature method, only HMAC-SHA1 as of now */
-    keyValueMap[oAuthLibDefaults::OAUTHLIB_SIGNATUREMETHOD_KEY] = std::string( "HMAC-SHA1" );
+    keyValueMap[Defaults::SIGNATUREMETHOD_KEY] = std::string( "HMAC-SHA1" );
 
     /* Timestamp */
-    keyValueMap[oAuthLibDefaults::OAUTHLIB_TIMESTAMP_KEY] = m_timeStamp;
+    keyValueMap[Defaults::TIMESTAMP_KEY] = m_timeStamp;
 
     /* Token */
     if( m_oAuthTokenKey.length() )
     {
-        keyValueMap[oAuthLibDefaults::OAUTHLIB_TOKEN_KEY] = m_oAuthTokenKey;
+        keyValueMap[Defaults::TOKEN_KEY] = m_oAuthTokenKey;
     }
 
     /* Verifier */
     if( includeOAuthVerifierPin && m_oAuthPin.length() )
     {
-        keyValueMap[oAuthLibDefaults::OAUTHLIB_VERIFIER_KEY] = m_oAuthPin;
+        keyValueMap[Defaults::VERIFIER_KEY] = m_oAuthPin;
     }
 
     /* Version */
-    keyValueMap[oAuthLibDefaults::OAUTHLIB_VERSION_KEY] = std::string( "1.0" );
+    keyValueMap[Defaults::VERSION_KEY] = std::string( "1.0" );
 
     /* Data if it's present */
     if( rawData.length() )
@@ -322,7 +344,7 @@ bool oAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
 }
 
 /*++
-* @method: oAuth::getSignature
+* @method: OAuth::getSignature
 *
 * @description: this method calculates HMAC-SHA1 signature of OAuth header
 *
@@ -335,9 +357,9 @@ bool oAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
 * @remarks: internal method
 *
 *--*/
-bool oAuth::getSignature( const eOAuthHttpRequestType eType,
+bool OAuth::getSignature( const Http::RequestType eType,
                           const std::string& rawUrl,
-                          const oAuthKeyValuePairs& rawKeyValuePairs,
+                          const KeyValuePairs& rawKeyValuePairs,
                           std::string& oAuthSignature )
 {
     std::string rawParams;
@@ -354,19 +376,19 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
     /* Start constructing base signature string. Refer http://dev.twitter.com/auth#intro */
     switch( eType )
     {
-    case eOAuthHttpGet:
+      case Http::Get:
         {
             sigBase.assign( "GET&" );
         }
         break;
 
-    case eOAuthHttpPost:
+      case Http::Post:
         {
             sigBase.assign( "POST&" );
         }
         break;
 
-    case eOAuthHttpDelete:
+      case Http::Delete:
         {
             sigBase.assign( "DELETE&" );
         }
@@ -385,9 +407,9 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
     /* Now, hash the signature base string using HMAC_SHA1 class */
     CHMAC_SHA1 objHMACSHA1;
     std::string secretSigningKey;
-    unsigned char strDigest[oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE];
+    unsigned char strDigest[Defaults::BUFFSIZE_LARGE];
 
-    memset( strDigest, 0, oAuthLibDefaults::OAUTHLIB_BUFFSIZE_LARGE );
+    memset( strDigest, 0, Defaults::BUFFSIZE_LARGE );
 
     /* Signing key is composed of consumer_secret&token_secret */
     secretSigningKey.assign( m_consumerSecret );
@@ -413,7 +435,7 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
 }
 
 /*++
-* @method: oAuth::getOAuthHeader
+* @method: OAuth::getOAuthHeader
 *
 * @description: this method builds OAuth header that should be used in HTTP requests
 *
@@ -426,7 +448,7 @@ bool oAuth::getSignature( const eOAuthHttpRequestType eType,
 * @output: oAuthHttpHeader - OAuth header
 *
 *--*/
-bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
+bool OAuth::getOAuthHeader( const Http::RequestType eType,
                             const std::string& rawUrl,
                             const std::string& rawData,
                             std::string& oAuthHttpHeader,
@@ -434,11 +456,11 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
 {
 
     bool got_auth_string = getOAuthString(eType, rawUrl, rawData, ",", oAuthHttpHeader, includeOAuthVerifierPin);
-    oAuthHttpHeader = oAuthLibDefaults::OAUTHLIB_AUTHHEADER_STRING + oAuthHttpHeader;
+    oAuthHttpHeader = Defaults::AUTHHEADER_STRING + oAuthHttpHeader;
     return got_auth_string;
 }
 /*++
-* @method: oAuth::getOAuthQueryString
+* @method: OAuth::getOAuthQueryString
 *
 * @description: this method builds OAuth query string that should be used in
 * HTTP requests.
@@ -455,7 +477,7 @@ bool oAuth::getOAuthHeader( const eOAuthHttpRequestType eType,
 * @output: oAuthQueryString - OAuth query string
 *
 *--*/
-bool oAuth::getOAuthQueryString( const eOAuthHttpRequestType eType,
+bool OAuth::getOAuthQueryString( const Http::RequestType eType,
                             const std::string& rawUrl,
                             const std::string& rawData,
                             std::string& oAuthQueryString,
@@ -464,14 +486,14 @@ bool oAuth::getOAuthQueryString( const eOAuthHttpRequestType eType,
     return getOAuthString(eType, rawUrl, rawData, "&", oAuthQueryString, includeOAuthVerifierPin);
 }
 
-bool oAuth::getOAuthString( const eOAuthHttpRequestType eType,
+bool OAuth::getOAuthString( const Http::RequestType eType,
                             const std::string& rawUrl,
                             const std::string& rawData,
                             const std::string& separator,
                             std::string& oAuthString,
                             const bool includeOAuthVerifierPin )
 {
-    oAuthKeyValuePairs rawKeyValuePairs;
+    KeyValuePairs rawKeyValuePairs;
     std::string rawParams;
     std::string oauthSignature;
     std::string paramsSeperator;
@@ -549,7 +571,7 @@ bool oAuth::getOAuthString( const eOAuthHttpRequestType eType,
 }
 
 /*++
-* @method: oAuth::getStringFromOAuthKeyValuePairs
+* @method: OAuth::getStringFromOAuthKeyValuePairs
 *
 * @description: this method builds a sorted string from key-value pairs
 *
@@ -561,19 +583,19 @@ bool oAuth::getOAuthString( const eOAuthHttpRequestType eType,
 * @remarks: internal method
 *
 *--*/
-bool oAuth::getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamMap,
+bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
                                              std::string& rawParams,
                                              const std::string& paramsSeperator )
 {
     rawParams.assign( "" );
     if( rawParamMap.size() )
     {
-        oAuthKeyValueList keyValueList;
+        KeyValueList keyValueList;
         std::string dummyStr;
 
         /* Push key-value pairs to a list of strings */
         keyValueList.clear();
-        oAuthKeyValuePairs::const_iterator itMap = rawParamMap.begin();
+        KeyValuePairs::const_iterator itMap = rawParamMap.begin();
         for( ; itMap != rawParamMap.end(); itMap++ )
         {
             dummyStr.assign( itMap->first );
@@ -595,7 +617,7 @@ bool oAuth::getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamM
 
         /* Now, form a string */
         dummyStr.assign( "" );
-        oAuthKeyValueList::iterator itKeyValue = keyValueList.begin();
+        KeyValueList::iterator itKeyValue = keyValueList.begin();
         for( ; itKeyValue != keyValueList.end(); itKeyValue++ )
         {
             if( dummyStr.length() )
@@ -610,7 +632,7 @@ bool oAuth::getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamM
 }
 
 /*++
-* @method: oAuth::extractOAuthTokenKeySecret
+* @method: OAuth::extractOAuthTokenKeySecret
 *
 * @description: this method extracts oauth token key and secret from
 *               HTTP response
@@ -620,7 +642,7 @@ bool oAuth::getStringFromOAuthKeyValuePairs( const oAuthKeyValuePairs& rawParamM
 * @output: none
 *
 *--*/
-bool oAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse )
+bool OAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse )
 {
     if( requestTokenResponse.length() )
     {
@@ -628,10 +650,10 @@ bool oAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse 
         std::string strDummy;
 
         /* Get oauth_token key */
-        nPos = requestTokenResponse.find( oAuthLibDefaults::OAUTHLIB_TOKEN_KEY );
+        nPos = requestTokenResponse.find( Defaults::TOKEN_KEY );
         if( std::string::npos != nPos )
         {
-            nPos = nPos + oAuthLibDefaults::OAUTHLIB_TOKEN_KEY.length() + strlen( "=" );
+            nPos = nPos + Defaults::TOKEN_KEY.length() + strlen( "=" );
             strDummy = requestTokenResponse.substr( nPos );
             nPos = strDummy.find( "&" );
             if( std::string::npos != nPos )
@@ -641,10 +663,10 @@ bool oAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse 
         }
 
         /* Get oauth_token_secret */
-        nPos = requestTokenResponse.find( oAuthLibDefaults::OAUTHLIB_TOKENSECRET_KEY );
+        nPos = requestTokenResponse.find( Defaults::TOKENSECRET_KEY );
         if( std::string::npos != nPos )
         {
-            nPos = nPos + oAuthLibDefaults::OAUTHLIB_TOKENSECRET_KEY.length() + strlen( "=" );
+            nPos = nPos + Defaults::TOKENSECRET_KEY.length() + strlen( "=" );
             strDummy = requestTokenResponse.substr( nPos );
             nPos = strDummy.find( "&" );
             if( std::string::npos != nPos )
@@ -654,13 +676,15 @@ bool oAuth::extractOAuthTokenKeySecret( const std::string& requestTokenResponse 
         }
 
         /* Get screen_name */
-        nPos = requestTokenResponse.find( oAuthLibDefaults::OAUTHLIB_SCREENNAME_KEY );
+        nPos = requestTokenResponse.find( Defaults::SCREENNAME_KEY );
         if( std::string::npos != nPos )
         {
-            nPos = nPos + oAuthLibDefaults::OAUTHLIB_SCREENNAME_KEY.length() + strlen( "=" );
+            nPos = nPos + Defaults::SCREENNAME_KEY.length() + strlen( "=" );
             strDummy = requestTokenResponse.substr( nPos );
             m_oAuthScreenName = strDummy;
         }
     }
     return true;
 }
+
+} // namespace OAuth

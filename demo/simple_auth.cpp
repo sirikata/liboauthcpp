@@ -26,7 +26,7 @@ std::string getUserString(std::string prompt) {
 int main(int argc, char** argv) {
 
     // Initialization
-    oAuth oauth;
+    OAuth::OAuth oauth;
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
     oauth.setConsumerKey( consumer_key );
@@ -36,7 +36,7 @@ int main(int argc, char** argv) {
     // having the user authorize an access token and to sign the request to
     // obtain said access token.
     std::string oAuthQueryString;
-    if (!oauth.getOAuthQueryString( eOAuthHttpGet, request_token_url, std::string( "" ), oAuthQueryString )) {
+    if (!oauth.getOAuthQueryString( OAuth::Http::Get, request_token_url, std::string( "" ), oAuthQueryString )) {
         std::cout << "getOAuthQueryString failed...";
         return -1;
     }
@@ -77,7 +77,7 @@ int main(int argc, char** argv) {
     // and use the access token returned. You should store the oauth
     // token and token secret somewhere safe, like a database, for
     // future use.
-    if (!oauth.getOAuthQueryString( eOAuthHttpGet, access_token_url, std::string( "" ), oAuthQueryString, true ) )
+    if (!oauth.getOAuthQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), oAuthQueryString, true ) )
     std::cout << "Enter the following in your browser to get the final access token & secret: " << std::endl;
     std::cout << access_token_url << "?" << oAuthQueryString;
     std::cout << std::endl;

@@ -26,7 +26,7 @@ std::string getUserString(std::string prompt) {
 
 int main(int argc, char** argv) {
     // Initialization
-    oAuth oauth;
+    OAuth::OAuth oauth;
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
     oauth.setConsumerKey( consumer_key );
@@ -43,7 +43,7 @@ int main(int argc, char** argv) {
     // we append the result only to the base URL, not the entire URL we passed
     // in here.
     std::string oAuthQueryString;
-    if (!oauth.getOAuthQueryString( eOAuthHttpGet, oauth_protected_resource + "?" + oauth_protected_resource_params, std::string(""), oAuthQueryString)) {
+    if (!oauth.getOAuthQueryString( OAuth::Http::Get, oauth_protected_resource + "?" + oauth_protected_resource_params, std::string(""), oAuthQueryString)) {
         std::cout << "getOAuthQueryString failed...";
         return -1;
     }
