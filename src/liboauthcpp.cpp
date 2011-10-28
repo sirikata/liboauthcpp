@@ -103,27 +103,27 @@ Token Token::extract(const KeyValuePairs& response) {
 
 
 
-OAuth::OAuth(const Consumer* consumer)
+Client::Client(const Consumer* consumer)
  : mConsumer(consumer),
    mToken(NULL)
 {
 }
 
-OAuth::OAuth(const Consumer* consumer, const Token* token)
+Client::Client(const Consumer* consumer, const Token* token)
  : mConsumer(consumer),
    mToken(token)
 {
 }
 
 
-OAuth::~OAuth()
+Client::~Client()
 {
 }
 
 
 
 /*++
-* @method: OAuth::generateNonceTimeStamp
+* @method: Client::generateNonceTimeStamp
 *
 * @description: this method generates nonce and timestamp for OAuth header
 *
@@ -134,7 +134,7 @@ OAuth::~OAuth()
 * @remarks: internal method
 *
 *--*/
-void OAuth::generateNonceTimeStamp()
+void Client::generateNonceTimeStamp()
 {
     char szTime[Defaults::BUFFSIZE];
     char szRand[Defaults::BUFFSIZE];
@@ -150,7 +150,7 @@ void OAuth::generateNonceTimeStamp()
 }
 
 /*++
-* @method: OAuth::buildOAuthTokenKeyValuePairs
+* @method: Client::buildOAuthTokenKeyValuePairs
 *
 * @description: this method prepares key-value pairs required for OAuth header
 *               and signature generation.
@@ -167,7 +167,7 @@ void OAuth::generateNonceTimeStamp()
 * @remarks: internal method
 *
 *--*/
-bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
+bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
                                           const std::string& rawData,
                                           const std::string& oauthSignature,
                                           KeyValuePairs& keyValueMap,
@@ -231,7 +231,7 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
 }
 
 /*++
-* @method: OAuth::getSignature
+* @method: Client::getSignature
 *
 * @description: this method calculates HMAC-SHA1 signature of OAuth header
 *
@@ -244,7 +244,7 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
 * @remarks: internal method
 *
 *--*/
-bool OAuth::getSignature( const Http::RequestType eType,
+bool Client::getSignature( const Http::RequestType eType,
                           const std::string& rawUrl,
                           const KeyValuePairs& rawKeyValuePairs,
                           std::string& oAuthSignature )
@@ -321,7 +321,7 @@ bool OAuth::getSignature( const Http::RequestType eType,
     return ( oAuthSignature.length() ) ? true : false;
 }
 
-std::string OAuth::getHttpHeader(const Http::RequestType eType,
+std::string Client::getHttpHeader(const Http::RequestType eType,
     const std::string& rawUrl,
     const std::string& rawData,
     const bool includeOAuthVerifierPin)
@@ -329,7 +329,7 @@ std::string OAuth::getHttpHeader(const Http::RequestType eType,
     return Defaults::AUTHHEADER_STRING + buildOAuthParameterString(",", eType, rawUrl, rawData, includeOAuthVerifierPin);
 }
 
-std::string OAuth::getURLQueryString(const Http::RequestType eType,
+std::string Client::getURLQueryString(const Http::RequestType eType,
     const std::string& rawUrl,
     const std::string& rawData,
     const bool includeOAuthVerifierPin)
@@ -337,7 +337,7 @@ std::string OAuth::getURLQueryString(const Http::RequestType eType,
     return buildOAuthParameterString("&", eType, rawUrl, rawData, includeOAuthVerifierPin);
 }
 
-std::string OAuth::buildOAuthParameterString(
+std::string Client::buildOAuthParameterString(
     const std::string& separator,
     const Http::RequestType eType,
     const std::string& rawUrl,
@@ -382,7 +382,7 @@ std::string OAuth::buildOAuthParameterString(
 }
 
 /*++
-* @method: OAuth::getStringFromOAuthKeyValuePairs
+* @method: Client::getStringFromOAuthKeyValuePairs
 *
 * @description: this method builds a sorted string from key-value pairs
 *
@@ -394,7 +394,7 @@ std::string OAuth::buildOAuthParameterString(
 * @remarks: internal method
 *
 *--*/
-bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
+bool Client::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
                                              std::string& rawParams,
                                              const std::string& paramsSeperator )
 {

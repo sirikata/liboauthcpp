@@ -29,7 +29,7 @@ int main(int argc, char** argv) {
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
     OAuth::Consumer consumer(consumer_key, consumer_secret);
-    OAuth::OAuth oauth(&consumer);
+    OAuth::Client oauth(&consumer);
 
     // Step 1: Get a request token. This is a temporary token that is used for
     // having the user authorize an access token and to sign the request to
@@ -72,7 +72,7 @@ int main(int argc, char** argv) {
     // and use the access token returned. You should store the oauth
     // token and token secret somewhere safe, like a database, for
     // future use.
-    oauth = OAuth::OAuth(&consumer, &request_token);
+    oauth = OAuth::Client(&consumer, &request_token);
     // Note that we explicitly specify an empty body here (it's a GET) so we can
     // also specify to include the oauth_verifier parameter
     oAuthQueryString = oauth.getURLQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), true );
@@ -100,7 +100,7 @@ int main(int argc, char** argv) {
 
     // E.g., to use the access token, you'd create a new OAuth using
     // it, discarding the request_token:
-    // oauth = OAuth::OAuth(&consumer, &access_token);
+    // oauth = OAuth::Client(&consumer, &access_token);
 
     return 0;
 }

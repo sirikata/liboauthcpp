@@ -104,10 +104,9 @@ private:
     std::string mPin;
 };
 
-class OAuth
-{
+class Client {
 public:
-    /** Construct an OAuth signer using only a consumer key and
+    /** Construct an OAuth Client using only a consumer key and
      *  secret. You can use this to start a three-legged
      *  authentication (to acquire an access token for a user) or for
      *  simple two-legged authentication (signing with empty access
@@ -116,8 +115,8 @@ public:
      *  \param consumer Consumer information. The caller must ensure
      *         it remains valid during the lifetime of this object
      */
-    OAuth(const Consumer* consumer);
-    /** Construct an OAuth signer with consumer key and secret (yours)
+    Client(const Consumer* consumer);
+    /** Construct an OAuth Client with consumer key and secret (yours)
      *  and access token key and secret (acquired and stored during
      *  three-legged authentication).
      *
@@ -126,9 +125,9 @@ public:
      *  \param token Access token information. The caller must ensure
      *         it remains valid during the lifetime of this object
      */
-    OAuth(const Consumer* consumer, const Token* token);
+    Client(const Consumer* consumer, const Token* token);
 
-    ~OAuth();
+    ~Client();
 
     /** Build an OAuth HTTP header for the given request.
      *
@@ -159,7 +158,7 @@ private:
     /** Disable default constructur -- must provide consumer
      * information.
      */
-    OAuth();
+    Client();
 
     /* OAuth data */
     const Consumer* mConsumer;

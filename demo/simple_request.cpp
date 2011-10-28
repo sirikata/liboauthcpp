@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     if (oauth_token_secret.empty()) oauth_token_secret = getUserString("Enter access token secret:");
     OAuth::Consumer consumer(consumer_key, consumer_secret);
     OAuth::Token token(oauth_token, oauth_token_secret);
-    OAuth::OAuth oauth(&consumer, &token);
+    OAuth::Client oauth(&consumer, &token);
 
     // Get the query string. Note that we pass in the URL as if we were
     // accessing the resource, but *the output query string includes the
