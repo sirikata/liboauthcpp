@@ -49,11 +49,22 @@ ENDIF()
 
 IF(LIBOAUTHCPP_BUILD_DEMOS)
 
-  # A simple demo, allowing you to manually perform HTTP steps in a browser
+  # A simple demo of authentication -- getting from consumer
+  # key/secret all the way to an access token for a user.The user
+  # manually performs HTTP steps in a browser.
   SET(LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES
     ${LIBOAUTHCPP_DEMO}/simple_auth.cpp
     )
   ADD_EXECUTABLE(simple_auth ${LIBOATHCPP_SIMPLEAUTHDEMO_SOURCES})
   TARGET_LINK_LIBRARIES(simple_auth oauthcpp)
+
+  # A simple demo of performing a request -- after acquiring an access
+  # token for a user, sets up the request to access a resource. The
+  # user manually performs HTTP steps in a browser.
+  SET(LIBOATHCPP_SIMPLEREQUESTDEMO_SOURCES
+    ${LIBOAUTHCPP_DEMO}/simple_request.cpp
+    )
+  ADD_EXECUTABLE(simple_request ${LIBOATHCPP_SIMPLEREQUESTDEMO_SOURCES})
+  TARGET_LINK_LIBRARIES(simple_request oauthcpp)
 
 ENDIF() #LIBOAUTHCPP_BUILD_DEMOS
