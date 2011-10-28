@@ -27,20 +27,22 @@ namespace Defaults
     const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
 };
 
-OAuth::OAuth()
+
+Consumer::Consumer(const std::string& key, const std::string& secret)
+ : mKey(key), mSecret(secret)
 {
 }
 
-OAuth::OAuth(const std::string& consumerKey, const std::string& consumerSecret)
- : m_consumerKey(consumerKey),
-   m_consumerSecret(consumerSecret)
+
+
+OAuth::OAuth(const Consumer& consumer)
+ : mConsumer(consumer)
 {
 }
 
-OAuth::OAuth(const std::string& consumerKey, const std::string& consumerSecret,
+OAuth::OAuth(const Consumer& consumer,
     const std::string& tokenKey, const std::string& tokenSecret)
- : m_consumerKey(consumerKey),
-   m_consumerSecret(consumerSecret),
+ : mConsumer(consumer),
    m_tokenKey(tokenKey),
    m_tokenSecret(tokenSecret)
 {
@@ -151,7 +153,7 @@ bool OAuth::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     }
 
     /* Consumer key and its value */
-    keyValueMap[Defaults::CONSUMERKEY_KEY] = m_consumerKey;
+    keyValueMap[Defaults::CONSUMERKEY_KEY] = mConsumer.key();
 
     /* Nonce key and its value */
     keyValueMap[Defaults::NONCE_KEY] = m_nonce;
@@ -270,7 +272,7 @@ bool OAuth::getSignature( const Http::RequestType eType,
     memset( strDigest, 0, Defaults::BUFFSIZE_LARGE );
 
     /* Signing key is composed of consumer_secret&token_secret */
-    secretSigningKey.assign( m_consumerSecret );
+    secretSigningKey.assign( mConsumer.secret() );
     secretSigningKey.append( "&" );
     if( m_tokenSecret.length() )
     {

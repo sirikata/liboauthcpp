@@ -20,35 +20,51 @@ typedef enum _RequestType
 typedef std::list<std::string> KeyValueList;
 typedef std::map<std::string, std::string> KeyValuePairs;
 
+/** A consumer of OAuth-protected services. It is the client to an
+ *  OAuth service provider and is usually registered with the service
+ *  provider, resulting in a consumer *key* and *secret* used to
+ *  identify the consumer. The key is included in all requests and the
+ *  secret is used to *sign* all requests.  Signed requests allow the
+ *  consumer to securely perform operations, including kicking off
+ *  three-legged authentication to enable performing operations on
+ *  behalf of a user of the service provider.
+ */
+class Consumer {
+public:
+    Consumer(const std::string& key, const std::string& secret);
+
+    const std::string& key() const { return mKey; }
+    const std::string& secret() const { return mSecret; }
+
+private:
+    const std::string mKey;
+    const std::string mSecret;
+};
+
 class OAuth
 {
 public:
-    /** Default constructor. Does not initialize any OAuth parameters
-     *  -- you need to manually set the consumer key and secret before
-     *  signing any requests.
-     */
-    OAuth();
     /** Construct an OAuth signer using only a consumer key and
      *  secret. You can use this to start a three-legged
      *  authentication (to acquire an access token for a user) or for
      *  simple two-legged authentication (signing with empty access
      *  token info).
+     *
+     *  \param consumer Consumer information. The caller must ensure
+     *         it remains valid during the lifetime of this object
      */
-    OAuth(const std::string& consumerKey, const std::string& consumerSecret);
+    OAuth(const Consumer& consumer);
     /** Construct an OAuth signer with consumer key and secret (yours)
      *  and access token key and secret (acquired and stored during
      *  three-legged authentication).
+     *
+     *  \param consumer Consumer information. The caller must ensure
+     *         it remains valid during the lifetime of this object
      */
-    OAuth(const std::string& consumerKey, const std::string& consumerSecret,
+    OAuth(const Consumer& consumer,
         const std::string& tokenKey, const std::string& tokenSecret);
 
     ~OAuth();
-
-    const std::string& getConsumerKey() { return m_consumerKey; }
-    void setConsumerKey(const std::string& consumerKey) { m_consumerKey = consumerKey; }
-
-    const std::string& getConsumerSecret() { return m_consumerSecret; }
-    void setConsumerSecret(const std::string& consumerSecret) { m_consumerSecret = consumerSecret; }
 
     const std::string& getTokenKey() { return m_tokenKey; }
     void setTokenKey(const std::string& tokenKey) { m_tokenKey = tokenKey; }
@@ -76,10 +92,13 @@ public:
     bool extractOAuthTokenKeySecret( const std::string& requestTokenResponse /* in */ );
 
 private:
+    /** Disable default constructur -- must provide consumer
+     * information.
+     */
+    OAuth();
 
     /* OAuth data */
-    std::string m_consumerKey;
-    std::string m_consumerSecret;
+    const Consumer& mConsumer;
     std::string m_tokenKey;
     std::string m_tokenSecret;
     std::string m_pin;

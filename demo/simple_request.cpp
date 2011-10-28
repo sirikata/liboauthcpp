@@ -32,7 +32,8 @@ int main(int argc, char** argv) {
     // simple_auth to get it.
     if (oauth_token.empty()) oauth_token = getUserString("Enter access token:");
     if (oauth_token_secret.empty()) oauth_token_secret = getUserString("Enter access token secret:");
-    OAuth::OAuth oauth(consumer_key, consumer_secret, oauth_token, oauth_token_secret);
+    OAuth::Consumer consumer(consumer_key, consumer_secret);
+    OAuth::OAuth oauth(consumer, oauth_token, oauth_token_secret);
 
     // Get the query string. Note that we pass in the URL as if we were , but
     // *the output query string includes the parameters you passed in*. Below,

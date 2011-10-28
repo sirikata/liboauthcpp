@@ -28,7 +28,8 @@ int main(int argc, char** argv) {
     // Initialization
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
     if (consumer_secret.empty()) consumer_secret = getUserString("Enter consumer secret:");
-    OAuth::OAuth oauth(consumer_key, consumer_secret);
+    OAuth::Consumer consumer(consumer_key, consumer_secret);
+    OAuth::OAuth oauth(consumer);
 
     // Step 1: Get a request token. This is a temporary token that is used for
     // having the user authorize an access token and to sign the request to
