@@ -106,9 +106,6 @@ public:
 
     ~OAuth();
 
-    void getOAuthScreenName( std::string& oAuthScreenName /* out */ );
-    void setOAuthScreenName( const std::string& oAuthScreenName /* in */ );
-
     bool getOAuthHeader( const Http::RequestType eType, /* in */
                          const std::string& rawUrl, /* in */
                          const std::string& rawData, /* in */
@@ -133,7 +130,6 @@ private:
     const Token* mToken;
     std::string m_nonce;
     std::string m_timeStamp;
-    std::string m_oAuthScreenName;
 
     /* OAuth related utility methods */
     bool buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin, /* in */

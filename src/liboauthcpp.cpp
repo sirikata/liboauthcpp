@@ -22,7 +22,6 @@ namespace Defaults
     const std::string TOKEN_KEY = "oauth_token";
     const std::string TOKENSECRET_KEY = "oauth_token_secret";
     const std::string VERIFIER_KEY = "oauth_verifier";
-    const std::string SCREENNAME_KEY = "screen_name";
 
     const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
 };
@@ -76,36 +75,6 @@ OAuth::~OAuth()
 }
 
 
-
-/*++
-* @method: OAuth::getOAuthScreenName
-*
-* @description: this method gives authorized user's screenname
-*
-* @input: none
-*
-* @output: screen name
-*
-*--*/
-void OAuth::getOAuthScreenName( std::string& oAuthScreenName )
-{
-    oAuthScreenName = m_oAuthScreenName;
-}
-
-/*++
-* @method: OAuth::setOAuthScreenName
-*
-* @description: this method sets authorized user's screenname
-*
-* @input: screen name
-*
-* @output: none
-*
-*--*/
-void OAuth::setOAuthScreenName( const std::string& oAuthScreenName )
-{
-    m_oAuthScreenName = oAuthScreenName;
-}
 
 /*++
 * @method: OAuth::generateNonceTimeStamp
@@ -546,15 +515,6 @@ Token OAuth::extractToken( const std::string& requestTokenResponse ) {
         {
             token_secret = strDummy.substr( 0, nPos );
         }
-    }
-
-    /* Get screen_name */
-    nPos = requestTokenResponse.find( Defaults::SCREENNAME_KEY );
-    if( std::string::npos != nPos )
-    {
-        nPos = nPos + Defaults::SCREENNAME_KEY.length() + strlen( "=" );
-        strDummy = requestTokenResponse.substr( nPos );
-        m_oAuthScreenName = strDummy;
     }
 
     return Token(token_key, token_secret);
