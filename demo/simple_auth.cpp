@@ -45,6 +45,8 @@ int main(int argc, char** argv) {
 
     // Extract the token and token_secret from the response
     std::string request_token_resp = getUserString("Enter the response:");
+    // This time we pass the response directly and have the library do the
+    // parsing (see next extractToken call for alternative)
     OAuth::Token request_token = oauth.extractToken( request_token_resp );
 
     // Get access token and secret from OAuth object
@@ -81,7 +83,11 @@ int main(int argc, char** argv) {
 
     // Once they've come back from the browser, extract the token and token_secret from the response
     std::string access_token_resp = getUserString("Enter the response:");
-    OAuth::Token access_token = oauth.extractToken( access_token_resp );
+    // On this extractToken, we do the parsing ourselves (via the library) so we
+    // can extract additional keys that are sent back, in the case of twitter,
+    // the screen_name
+    OAuth::KeyValuePairs access_token_resp_data = OAuth::ParseKeyValuePairs(access_token_resp);
+    OAuth::Token access_token = oauth.extractToken( access_token_resp_data );
 
     std::cout << "Access token:" << std::endl;
     std::cout << "    - oauth_token        = " << access_token.key() << std::endl;
@@ -89,6 +95,9 @@ int main(int argc, char** argv) {
     std::cout << std::endl;
     std::cout << "You may now access protected resources using the access tokens above." << std::endl;
     std::cout << std::endl;
+
+    if (access_token_resp_data.find("screen_name") != access_token_resp_data.end())
+        std::cout << "Also extracted screen name from access token response: " << access_token_resp_data["screen_name"] << std::endl;
 
     // E.g., to use the access token, you'd create a new OAuth using
     // it, discarding the request_token:

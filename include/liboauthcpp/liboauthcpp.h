@@ -21,10 +21,23 @@ typedef enum _RequestType
 typedef std::list<std::string> KeyValueList;
 typedef std::map<std::string, std::string> KeyValuePairs;
 
+/** Parses key value pairs into a map.
+ *  \param encoded the encoded key value pairs, i.e. the url encoded parameters
+ *  \returns a map of string keys to string values
+ *  \throws ParseError if the encoded data cannot be decoded
+ */
+KeyValuePairs ParseKeyValuePairs(const std::string& encoded);
 
 class ParseError : public std::runtime_error {
 public:
     ParseError(const std::string msg)
+     : std::runtime_error(msg)
+    {}
+};
+
+class MissingKeyError : public std::runtime_error {
+public:
+    MissingKeyError(const std::string msg)
      : std::runtime_error(msg)
     {}
 };
@@ -117,6 +130,7 @@ public:
                          std::string& oAuthQueryString, /* out */
                          const bool includeOAuthVerifierPin = false /* in */ );
 
+    Token extractToken( const KeyValuePairs& response );
     Token extractToken( const std::string& requestTokenResponse /* in */ );
 
 private:

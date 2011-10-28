@@ -26,6 +26,41 @@ namespace Defaults
     const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
 };
 
+// Parse a single key-value pair
+static std::pair<std::string, std::string> ParseKeyValuePair(const std::string& encoded) {
+    std::size_t eq_pos = encoded.find("=");
+    if (eq_pos == std::string::npos)
+        throw ParseError("Failed to find '=' in key-value pair.");
+    return std::pair<std::string, std::string>(
+        encoded.substr(0, eq_pos),
+        encoded.substr(eq_pos+1)
+    );
+}
+
+KeyValuePairs ParseKeyValuePairs(const std::string& encoded) {
+    KeyValuePairs result;
+
+    if (encoded.length() == 0) return result;
+
+    // Split by &
+    std::size_t last_amp = 0;
+    // We can bail when the last one "found" was the end of the string
+    while(true) {
+        std::size_t next_amp = encoded.find('&', last_amp+1);
+        std::string keyval =
+            (next_amp == std::string::npos) ?
+            encoded.substr(last_amp) :
+            encoded.substr(last_amp, next_amp-last_amp);
+        result.insert(ParseKeyValuePair(keyval));
+        // Track spot after the & so the first iteration works without dealing
+        // with -1 index
+        last_amp = next_amp+1;
+
+        // Exit condition
+        if (next_amp == std::string::npos) break;
+    }
+    return result;
+}
 
 
 Consumer::Consumer(const std::string& key, const std::string& secret)
@@ -483,39 +518,21 @@ bool OAuth::getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap,
 * @output: none
 *
 *--*/
-Token OAuth::extractToken( const std::string& requestTokenResponse ) {
+Token OAuth::extractToken( const std::string& response ) {
+    return extractToken(ParseKeyValuePairs(response));
+}
+Token OAuth::extractToken( const KeyValuePairs& response ) {
     std::string token_key, token_secret;
 
-    if (requestTokenResponse.length() == 0) throw ParseError("Tried to extract token information from empty response.");
+    KeyValuePairs::const_iterator it = response.find(Defaults::TOKEN_KEY);
+    if (it == response.end())
+        throw MissingKeyError("Couldn't find oauth_token in response");
+    token_key = it->second;
 
-    size_t nPos = std::string::npos;
-    std::string strDummy;
-
-    /* Get oauth_token key */
-    nPos = requestTokenResponse.find( Defaults::TOKEN_KEY );
-    if( std::string::npos != nPos )
-    {
-        nPos = nPos + Defaults::TOKEN_KEY.length() + strlen( "=" );
-        strDummy = requestTokenResponse.substr( nPos );
-        nPos = strDummy.find( "&" );
-        if( std::string::npos != nPos )
-        {
-            token_key = strDummy.substr( 0, nPos );
-        }
-    }
-
-    /* Get oauth_token_secret */
-    nPos = requestTokenResponse.find( Defaults::TOKENSECRET_KEY );
-    if( std::string::npos != nPos )
-    {
-        nPos = nPos + Defaults::TOKENSECRET_KEY.length() + strlen( "=" );
-        strDummy = requestTokenResponse.substr( nPos );
-        nPos = strDummy.find( "&" );
-        if( std::string::npos != nPos )
-        {
-            token_secret = strDummy.substr( 0, nPos );
-        }
-    }
+    it = response.find(Defaults::TOKENSECRET_KEY);
+    if (it == response.end())
+        throw MissingKeyError("Couldn't find oauth_token_secret in response");
+    token_secret = it->second;
 
     return Token(token_key, token_secret);
 }
