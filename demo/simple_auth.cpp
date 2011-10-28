@@ -34,11 +34,8 @@ int main(int argc, char** argv) {
     // Step 1: Get a request token. This is a temporary token that is used for
     // having the user authorize an access token and to sign the request to
     // obtain said access token.
-    std::string oAuthQueryString;
-    if (!oauth.getOAuthQueryString( OAuth::Http::Get, request_token_url, std::string( "" ), oAuthQueryString )) {
-        std::cout << "getOAuthQueryString failed...";
-        return -1;
-    }
+    std::string oAuthQueryString =
+        oauth.getURLQueryString( OAuth::Http::Get, request_token_url);
     std::cout << "Enter the following in your browser to get the request token: " << std::endl;
     std::cout << request_token_url << "?" << oAuthQueryString << std::endl;
     std::cout << std::endl;
@@ -76,7 +73,9 @@ int main(int argc, char** argv) {
     // token and token secret somewhere safe, like a database, for
     // future use.
     oauth = OAuth::OAuth(&consumer, &request_token);
-    if (!oauth.getOAuthQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), oAuthQueryString, true ) )
+    // Note that we explicitly specify an empty body here (it's a GET) so we can
+    // also specify to include the oauth_verifier parameter
+    oAuthQueryString = oauth.getURLQueryString( OAuth::Http::Get, access_token_url, std::string( "" ), true );
     std::cout << "Enter the following in your browser to get the final access token & secret: " << std::endl;
     std::cout << access_token_url << "?" << oAuthQueryString;
     std::cout << std::endl;

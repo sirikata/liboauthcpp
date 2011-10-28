@@ -36,15 +36,12 @@ int main(int argc, char** argv) {
     OAuth::Token token(oauth_token, oauth_token_secret);
     OAuth::OAuth oauth(&consumer, &token);
 
-    // Get the query string. Note that we pass in the URL as if we were , but
-    // *the output query string includes the parameters you passed in*. Below,
-    // we append the result only to the base URL, not the entire URL we passed
-    // in here.
-    std::string oAuthQueryString;
-    if (!oauth.getOAuthQueryString( OAuth::Http::Get, oauth_protected_resource + "?" + oauth_protected_resource_params, std::string(""), oAuthQueryString)) {
-        std::cout << "getOAuthQueryString failed...";
-        return -1;
-    }
+    // Get the query string. Note that we pass in the URL as if we were
+    // accessing the resource, but *the output query string includes the
+    // parameters you passed in*. Below, we append the result only to the base
+    // URL, not the entire URL we passed in here.
+    std::string oAuthQueryString =
+        oauth.getURLQueryString(OAuth::Http::Get, oauth_protected_resource + "?" + oauth_protected_resource_params);
 
     std::cout << "Enter the following in your browser to access the resource: " << std::endl;
     std::cout << oauth_protected_resource << "?" << oAuthQueryString << std::endl;

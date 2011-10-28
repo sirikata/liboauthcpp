@@ -119,16 +119,31 @@ public:
 
     ~OAuth();
 
-    bool getOAuthHeader( const Http::RequestType eType, /* in */
-                         const std::string& rawUrl, /* in */
-                         const std::string& rawData, /* in */
-                         std::string& oAuthHttpHeader, /* out */
-                         const bool includeOAuthVerifierPin = false /* in */ );
-    bool getOAuthQueryString( const Http::RequestType eType, /* in */
-                         const std::string& rawUrl, /* in */
-                         const std::string& rawData, /* in */
-                         std::string& oAuthQueryString, /* out */
-                         const bool includeOAuthVerifierPin = false /* in */ );
+    /** Build an OAuth HTTP header for the given request.
+     *
+     *  \param eType the HTTP request type, e.g. GET or POST
+     *  \param rawUrl the raw request URL (should include query parameters)
+     *  \param rawData the raw HTTP request data (can be empty)
+     *  \param includeOAuthVerifierPin if true, adds oauth_verifier parameter
+     *  \returns a string containing the HTTP header
+     */
+    std::string getHttpHeader(const Http::RequestType eType,
+                         const std::string& rawUrl,
+                         const std::string& rawData = "",
+                         const bool includeOAuthVerifierPin = false);
+    /** Build an OAuth HTTP header for the given request.
+     *
+     *  \param eType the HTTP request type, e.g. GET or POST
+     *  \param rawUrl the raw request URL (should include query parameters)
+     *  \param rawData the raw HTTP request data (can be empty)
+     *  \param includeOAuthVerifierPin if true, adds oauth_verifier parameter
+     *  \returns a string containing the query string, including the query
+     *         parameters in the rawUrl
+     */
+    std::string getURLQueryString(const Http::RequestType eType,
+                         const std::string& rawUrl,
+                         const std::string& rawData = "",
+                         const bool includeOAuthVerifierPin = false);
 
     Token extractToken( const KeyValuePairs& response );
     Token extractToken( const std::string& requestTokenResponse /* in */ );
@@ -156,14 +171,13 @@ private:
                                           std::string& rawParams, /* out */
                                           const std::string& paramsSeperator /* in */ );
 
-    // Utility for getting OAuth HTTP header or query string
-    bool getOAuthString( const Http::RequestType eType, /* in */
-                         const std::string& rawUrl, /* in */
-                         const std::string& rawData, /* in */
-                         const std::string& separator /* in */,
-                         std::string& oAuthString, /* out */
-                         const bool includeOAuthVerifierPin /* in */ );
-
+    // Utility for building OAuth HTTP header or query string
+    std::string buildOAuthParameterString(
+        const std::string& separator,
+        const Http::RequestType eType,
+        const std::string& rawUrl,
+        const std::string& rawData,
+        const bool includeOAuthVerifierPin);
 
     bool getSignature( const Http::RequestType eType, /* in */
                        const std::string& rawUrl, /* in */

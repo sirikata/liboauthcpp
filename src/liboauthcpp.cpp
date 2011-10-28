@@ -95,16 +95,6 @@ OAuth::OAuth(const Consumer* consumer, const Token* token)
 }
 
 
-/*++
-* @method: OAuth::~OAuth
-*
-* @description: destructor
-*
-* @input: none
-*
-* @output: none
-*
-*--*/
 OAuth::~OAuth()
 {
 }
@@ -310,64 +300,28 @@ bool OAuth::getSignature( const Http::RequestType eType,
     return ( oAuthSignature.length() ) ? true : false;
 }
 
-/*++
-* @method: OAuth::getOAuthHeader
-*
-* @description: this method builds OAuth header that should be used in HTTP requests
-*
-* @input: eType - HTTP request type
-*         rawUrl - raw url of the HTTP request
-*         rawData - HTTP data
-*         includeOAuthVerifierPin - flag to indicate whether or not oauth_verifier needs to included
-*                                   in OAuth header
-*
-* @output: oAuthHttpHeader - OAuth header
-*
-*--*/
-bool OAuth::getOAuthHeader( const Http::RequestType eType,
-                            const std::string& rawUrl,
-                            const std::string& rawData,
-                            std::string& oAuthHttpHeader,
-                            const bool includeOAuthVerifierPin )
+std::string OAuth::getHttpHeader(const Http::RequestType eType,
+    const std::string& rawUrl,
+    const std::string& rawData,
+    const bool includeOAuthVerifierPin)
 {
-
-    bool got_auth_string = getOAuthString(eType, rawUrl, rawData, ",", oAuthHttpHeader, includeOAuthVerifierPin);
-    oAuthHttpHeader = Defaults::AUTHHEADER_STRING + oAuthHttpHeader;
-    return got_auth_string;
-}
-/*++
-* @method: OAuth::getOAuthQueryString
-*
-* @description: this method builds OAuth query string that should be used in
-* HTTP requests.
-*
-* @note: This omits the ? part to allow you to easily combine it with other
-* query strings.
-*
-* @input: eType - HTTP request type
-*         rawUrl - raw url of the HTTP request
-*         rawData - HTTP data
-*         includeOAuthVerifierPin - flag to indicate whether or not oauth_verifier needs to included
-*                                   in OAuth header
-*
-* @output: oAuthQueryString - OAuth query string
-*
-*--*/
-bool OAuth::getOAuthQueryString( const Http::RequestType eType,
-                            const std::string& rawUrl,
-                            const std::string& rawData,
-                            std::string& oAuthQueryString,
-                            const bool includeOAuthVerifierPin )
-{
-    return getOAuthString(eType, rawUrl, rawData, "&", oAuthQueryString, includeOAuthVerifierPin);
+    return Defaults::AUTHHEADER_STRING + buildOAuthParameterString(",", eType, rawUrl, rawData, includeOAuthVerifierPin);
 }
 
-bool OAuth::getOAuthString( const Http::RequestType eType,
-                            const std::string& rawUrl,
-                            const std::string& rawData,
-                            const std::string& separator,
-                            std::string& oAuthString,
-                            const bool includeOAuthVerifierPin )
+std::string OAuth::getURLQueryString(const Http::RequestType eType,
+    const std::string& rawUrl,
+    const std::string& rawData,
+    const bool includeOAuthVerifierPin)
+{
+    return buildOAuthParameterString("&", eType, rawUrl, rawData, includeOAuthVerifierPin);
+}
+
+std::string OAuth::buildOAuthParameterString(
+    const std::string& separator,
+    const Http::RequestType eType,
+    const std::string& rawUrl,
+    const std::string& rawData,
+    const bool includeOAuthVerifierPin)
 {
     KeyValuePairs rawKeyValuePairs;
     std::string rawParams;
@@ -376,7 +330,6 @@ bool OAuth::getOAuthString( const Http::RequestType eType,
     std::string pureUrl( rawUrl );
 
     /* Clear header string initially */
-    oAuthString = "";
     rawKeyValuePairs.clear();
 
     /* If URL itself contains ?key=value, then extract and put them in map */
@@ -441,9 +394,7 @@ bool OAuth::getOAuthString( const Http::RequestType eType,
     getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, separator );
 
     /* Build authorization header */
-    oAuthString = rawParams;
-
-    return ( oAuthString.length() ) ? true : false;
+    return rawParams;
 }
 
 /*++
