@@ -29,9 +29,9 @@ void CHMAC_SHA1::HMAC_SHA1(BYTE *text, int text_len, BYTE *key, int key_len, BYT
 		memcpy(SHA1_Key, key, key_len);
 
 	/* STEP 2 */
-	for (int i=0; i<sizeof(m_ipad); i++)
+	for (int i=0; i<(int)sizeof(m_ipad); i++)
 	{
-		m_ipad[i] ^= SHA1_Key[i];		
+		m_ipad[i] ^= SHA1_Key[i];
 	}
 
 	/* STEP 3 */
@@ -46,7 +46,7 @@ void CHMAC_SHA1::HMAC_SHA1(BYTE *text, int text_len, BYTE *key, int key_len, BYT
 	CSHA1::GetHash((UINT_8 *)szReport);
 
 	/* STEP 5 */
-	for (int j=0; j<sizeof(m_opad); j++)
+	for (int j=0; j<(int)sizeof(m_opad); j++)
 	{
 		m_opad[j] ^= SHA1_Key[j];
 	}
