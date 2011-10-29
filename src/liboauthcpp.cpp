@@ -81,7 +81,7 @@ Token::Token(const std::string& key, const std::string& secret, const std::strin
 }
 
 Token Token::extract(const std::string& response) {
-    return Token::extract(response);
+    return Token::extract(ParseKeyValuePairs(response));
 }
 
 Token Token::extract(const KeyValuePairs& response) {
