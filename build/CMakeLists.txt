@@ -16,6 +16,13 @@ ENDIF(COMMAND CMAKE_POLICY)
 PROJECT(liboauthcpp C CXX)
 ENABLE_LANGUAGE(C)
 
+# Disable some annoying, unnecessary Windows warnings
+IF(WIN32)
+  ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS)
+  SET(CMAKE_CXX_FLAGS "-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS")
+ENDIF()
+
+# Force a default build type
 IF(NOT CMAKE_BUILD_TYPE)
   SET(CMAKE_BUILD_TYPE Release CACHE STRING
     "Build types include: Default Debug Release None RelWithDebInfo." FORCE
