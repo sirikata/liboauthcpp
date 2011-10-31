@@ -21,6 +21,10 @@ typedef enum _RequestType
 typedef std::list<std::string> KeyValueList;
 typedef std::map<std::string, std::string> KeyValuePairs;
 
+/** URL encode a string value.
+ */
+std::string URLEncode(const std::string& decoded);
+
 /** Parses key value pairs into a map.
  *  \param encoded the encoded key value pairs, i.e. the url encoded parameters
  *  \returns a map of string keys to string values

@@ -26,6 +26,10 @@ namespace Defaults
     const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
 };
 
+std::string URLEncode(const std::string& decoded) {
+    return urlencode(decoded);
+}
+
 // Parse a single key-value pair
 static std::pair<std::string, std::string> ParseKeyValuePair(const std::string& encoded) {
     std::size_t eq_pos = encoded.find("=");
