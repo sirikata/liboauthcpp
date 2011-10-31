@@ -23,7 +23,8 @@ namespace Defaults
     const std::string TOKENSECRET_KEY = "oauth_token_secret";
     const std::string VERIFIER_KEY = "oauth_verifier";
 
-    const std::string AUTHHEADER_STRING = "Authorization: OAuth ";
+    const std::string AUTHHEADER_FIELD = "Authorization: ";
+    const std::string AUTHHEADER_PREFIX = "OAuth ";
 };
 
 std::string URLEncode(const std::string& decoded) {
@@ -267,6 +268,12 @@ bool Client::getSignature( const Http::RequestType eType,
     /* Start constructing base signature string. Refer http://dev.twitter.com/auth#intro */
     switch( eType )
     {
+      case Http::Head:
+        {
+            sigBase.assign( "HEAD&" );
+        }
+        break;
+
       case Http::Get:
         {
             sigBase.assign( "GET&" );
@@ -330,7 +337,15 @@ std::string Client::getHttpHeader(const Http::RequestType eType,
     const std::string& rawData,
     const bool includeOAuthVerifierPin)
 {
-    return Defaults::AUTHHEADER_STRING + buildOAuthParameterString(",", eType, rawUrl, rawData, includeOAuthVerifierPin);
+    return Defaults::AUTHHEADER_PREFIX + buildOAuthParameterString(",", eType, rawUrl, rawData, includeOAuthVerifierPin);
+}
+
+std::string Client::getFormattedHttpHeader(const Http::RequestType eType,
+    const std::string& rawUrl,
+    const std::string& rawData,
+    const bool includeOAuthVerifierPin)
+{
+    return Defaults::AUTHHEADER_FIELD + Defaults::AUTHHEADER_PREFIX + buildOAuthParameterString(",", eType, rawUrl, rawData, includeOAuthVerifierPin);
 }
 
 std::string Client::getURLQueryString(const Http::RequestType eType,

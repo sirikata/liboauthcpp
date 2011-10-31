@@ -12,6 +12,7 @@ namespace Http {
 typedef enum _RequestType
 {
     Invalid = 0,
+    Head,
     Get,
     Post,
     Delete
@@ -133,7 +134,8 @@ public:
 
     ~Client();
 
-    /** Build an OAuth HTTP header for the given request.
+    /** Build an OAuth HTTP header for the given request. This version provides
+     *  only the field value.
      *
      *  \param eType the HTTP request type, e.g. GET or POST
      *  \param rawUrl the raw request URL (should include query parameters)
@@ -142,6 +144,19 @@ public:
      *  \returns a string containing the HTTP header
      */
     std::string getHttpHeader(const Http::RequestType eType,
+                         const std::string& rawUrl,
+                         const std::string& rawData = "",
+                         const bool includeOAuthVerifierPin = false);
+    /** Build an OAuth HTTP header for the given request. This version gives a
+     *  fully formatted header, i.e. including the header field name.
+     *
+     *  \param eType the HTTP request type, e.g. GET or POST
+     *  \param rawUrl the raw request URL (should include query parameters)
+     *  \param rawData the raw HTTP request data (can be empty)
+     *  \param includeOAuthVerifierPin if true, adds oauth_verifier parameter
+     *  \returns a string containing the HTTP header
+     */
+    std::string getFormattedHttpHeader(const Http::RequestType eType,
                          const std::string& rawUrl,
                          const std::string& rawData = "",
                          const bool includeOAuthVerifierPin = false);
