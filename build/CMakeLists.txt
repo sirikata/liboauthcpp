@@ -18,8 +18,16 @@ IF(APPLE)
         SET(CMAKE_C_COMPILER gcc-4.0)
     ELSE()
         SET(CMAKE_CXX_FLAGS -m32)
-        SET(CMAKE_CXX_COMPILER g++-4.2)
-        SET(CMAKE_C_COMPILER gcc-4.2)
+        IF(EXISTS /usr/bin/g++-4.2)
+          SET(CMAKE_CXX_COMPILER g++-4.2)
+          SET(CMAKE_C_COMPILER gcc-4.2)
+        ELSE()
+          # Don't try to override. This is probably a newer setup
+          # using XCode 4.2+ which doesn't provide versioned gcc's
+          # since it uses llvm.
+          #SET(CMAKE_CXX_COMPILER g++)
+          #SET(CMAKE_C_COMPILER gcc)
+        ENDIF()
     ENDIF()
 ENDIF()
 
