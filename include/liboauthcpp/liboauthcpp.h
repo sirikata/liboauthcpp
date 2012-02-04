@@ -190,15 +190,23 @@ private:
                                        const std::string& rawData, /* in */
                                        const std::string& oauthSignature, /* in */
                                        KeyValuePairs& keyValueMap /* out */,
-                                       const bool generateTimestamp /* in */ );
+                                       const bool urlEncodeValues /* in */,
+                                       const bool generateTimestamp /* in */);
 
     bool getStringFromOAuthKeyValuePairs( const KeyValuePairs& rawParamMap, /* in */
                                           std::string& rawParams, /* out */
                                           const std::string& paramsSeperator /* in */ );
 
-    // Utility for building OAuth HTTP header or query string
+    typedef enum _ParameterStringType {
+        QueryStringString,
+        AuthorizationHeaderString
+    } ParameterStringType;
+    // Utility for building OAuth HTTP header or query string. The string type
+    // controls the separator and also filters parameters: for query strings,
+    // all parameters are included. For HTTP headers, only auth parameters are
+    // included.
     std::string buildOAuthParameterString(
-        const std::string& separator,
+        ParameterStringType string_type,
         const Http::RequestType eType,
         const std::string& rawUrl,
         const std::string& rawData,
