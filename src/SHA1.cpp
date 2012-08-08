@@ -30,6 +30,7 @@
 */
 
 #include "SHA1.h"
+#include <cassert>
 
 #ifdef SHA1_UTILITY_FUNCTIONS
 #define SHA1_MAX_FILE_BUFFER 8000
@@ -185,13 +186,15 @@ bool CSHA1::HashFile(char *szFileName)
 
 	for(i = 0; i < ulBlocks; i++)
 	{
-		fread(uData, 1, SHA1_MAX_FILE_BUFFER, fIn);
+		size_t nread = fread(uData, 1, SHA1_MAX_FILE_BUFFER, fIn);
+                assert(nread == SHA1_MAX_FILE_BUFFER);
 		Update((UINT_8 *)uData, SHA1_MAX_FILE_BUFFER);
 	}
 
 	if(ulRest != 0)
 	{
-		fread(uData, 1, ulRest, fIn);
+		size_t nread = fread(uData, 1, ulRest, fIn);
+                assert(nread == ulRest);
 		Update((UINT_8 *)uData, ulRest);
 	}
 

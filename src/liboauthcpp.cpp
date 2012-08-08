@@ -442,7 +442,7 @@ std::string Client::buildOAuthParameterString(
         oauth_keys.push_back(Defaults::VERIFIER_KEY);
         oauth_keys.push_back(Defaults::VERSION_KEY);
 
-        for(int i = 0; i < oauth_keys.size(); i++)
+        for(size_t i = 0; i < oauth_keys.size(); i++)
             if (rawKeyValuePairs.find(oauth_keys[i]) != rawKeyValuePairs.end())
                 oauthKeyValuePairs[oauth_keys[i]] = rawKeyValuePairs[oauth_keys[i]];
         getStringFromOAuthKeyValuePairs( oauthKeyValuePairs, rawParams, separator );
