@@ -208,7 +208,11 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     /* Signature if supplied */
     if( oauthSignature.length() )
     {
-        keyValueMap[Defaults::SIGNATURE_KEY] = encoder(oauthSignature);
+        // Signature is exempt from encoding. The procedure for
+        // computing it already percent-encodes it as required by the
+        // spec for both query string and Auth header
+        // methods. Therefore, it's pass-through in both cases.
+        keyValueMap[Defaults::SIGNATURE_KEY] = oauthSignature;
     }
 
     /* Signature method, only HMAC-SHA1 as of now */
