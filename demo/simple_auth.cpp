@@ -9,9 +9,9 @@
  */
 std::string consumer_key = ""; // Key from Twitter
 std::string consumer_secret = ""; // Secret from Twitter
-std::string request_token_url = "http://twitter.com/oauth/request_token";
-std::string authorize_url = "http://twitter.com/oauth/authorize";
-std::string access_token_url = "http://twitter.com/oauth/access_token";
+std::string request_token_url = "https://api.twitter.com/oauth/request_token";
+std::string authorize_url = "https://api.twitter.com/oauth/authorize";
+std::string access_token_url = "https://api.twitter.com/oauth/access_token";
 
 
 std::string getUserString(std::string prompt) {
