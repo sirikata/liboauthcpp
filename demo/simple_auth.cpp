@@ -10,6 +10,7 @@
 std::string consumer_key = ""; // Key from Twitter
 std::string consumer_secret = ""; // Secret from Twitter
 std::string request_token_url = "https://api.twitter.com/oauth/request_token";
+std::string request_token_query_args = "oauth_callback=oob";
 std::string authorize_url = "https://api.twitter.com/oauth/authorize";
 std::string access_token_url = "https://api.twitter.com/oauth/access_token";
 
@@ -34,9 +35,14 @@ int main(int argc, char** argv) {
     // Step 1: Get a request token. This is a temporary token that is used for
     // having the user authorize an access token and to sign the request to
     // obtain said access token.
+    std::string base_request_token_url = request_token_url + (request_token_query_args.empty() ? std::string("") : (std::string("?")+request_token_query_args) );
     std::string oAuthQueryString =
-        oauth.getURLQueryString( OAuth::Http::Get, request_token_url);
+        oauth.getURLQueryString( OAuth::Http::Get, base_request_token_url);
+
     std::cout << "Enter the following in your browser to get the request token: " << std::endl;
+    // Note that getting the query string includes the arguments we
+    // passed in, so we don't need to include request_token_query_args
+    // again.
     std::cout << request_token_url << "?" << oAuthQueryString << std::endl;
     std::cout << std::endl;
 
