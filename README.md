@@ -13,18 +13,18 @@ Requirements
 
 You should only need:
 
-* CMake
-* A C++ compiler for your platform (e.g. g++, Microsoft Visual C++)
+ * CMake
+ * A C++ compiler for your platform (e.g. g++, Microsoft Visual C++)
 
 Compiling
 ---------
 
 The build process is simple:
 
-cd liboauthcpp
-cd build
-cmake .
-make            # or open Visual Studio and build the solution
+    cd liboauthcpp
+    cd build
+    cmake .
+    make            # or open Visual Studio and build the solution
 
 If your own project uses CMake you can also include
 build/CMakeLists.txt directly into your project and reference the
