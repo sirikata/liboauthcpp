@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <vector>
+#include <cassert>
 
 namespace OAuth {
 
@@ -77,6 +78,16 @@ KeyValuePairs ParseKeyValuePairs(const std::string& encoded) {
     return result;
 }
 
+// Helper for parameters in key-value pair lists that should only appear
+// once. Either replaces an existing entry or adds a new entry.
+static void ReplaceOrInsertKeyValuePair(KeyValuePairs& kvp, const std::string& key, const std::string& value) {
+    assert(kvp.count(key) <= 1);
+    KeyValuePairs::iterator it = kvp.find(key);
+    if (it != kvp.end())
+        it->second = value;
+    else
+        kvp.insert(KeyValuePairs::value_type(key, value));
+}
 
 Consumer::Consumer(const std::string& key, const std::string& secret)
  : mKey(key), mSecret(secret)
@@ -200,10 +211,10 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     }
 
     /* Consumer key and its value */
-    keyValueMap[Defaults::CONSUMERKEY_KEY] = encoder(mConsumer->key());
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::CONSUMERKEY_KEY, encoder(mConsumer->key()));
 
     /* Nonce key and its value */
-    keyValueMap[Defaults::NONCE_KEY] = encoder(m_nonce);
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::NONCE_KEY, encoder(m_nonce));
 
     /* Signature if supplied */
     if( oauthSignature.length() )
@@ -212,29 +223,29 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
         // computing it already percent-encodes it as required by the
         // spec for both query string and Auth header
         // methods. Therefore, it's pass-through in both cases.
-        keyValueMap[Defaults::SIGNATURE_KEY] = oauthSignature;
+        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::SIGNATURE_KEY, oauthSignature);
     }
 
     /* Signature method, only HMAC-SHA1 as of now */
-    keyValueMap[Defaults::SIGNATUREMETHOD_KEY] = std::string( "HMAC-SHA1" );
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::SIGNATUREMETHOD_KEY, std::string( "HMAC-SHA1" ));
 
     /* Timestamp */
-    keyValueMap[Defaults::TIMESTAMP_KEY] = encoder(m_timeStamp);
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TIMESTAMP_KEY, encoder(m_timeStamp));
 
     /* Token */
     if( mToken && mToken->key().length() )
     {
-        keyValueMap[Defaults::TOKEN_KEY] = encoder(mToken->key());
+        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TOKEN_KEY, encoder(mToken->key()));
     }
 
     /* Verifier */
     if( includeOAuthVerifierPin && mToken && mToken->pin().length() )
     {
-        keyValueMap[Defaults::VERIFIER_KEY] = encoder(mToken->pin());
+        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::VERIFIER_KEY, encoder(mToken->pin()));
     }
 
     /* Version */
-    keyValueMap[Defaults::VERSION_KEY] = std::string( "1.0" );
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::VERSION_KEY, std::string( "1.0" ));
 
     /* Data if it's present */
     if( rawData.length() )
@@ -247,7 +258,7 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
         {
             dummyStrKey = rawData.substr( 0, nPos );
             dummyStrValue = rawData.substr( nPos + 1 );
-            keyValueMap[dummyStrKey] = dummyStrValue;
+            ReplaceOrInsertKeyValuePair(keyValueMap, dummyStrKey, dummyStrValue);
         }
     }
 
@@ -446,9 +457,12 @@ std::string Client::buildOAuthParameterString(
         oauth_keys.push_back(Defaults::VERIFIER_KEY);
         oauth_keys.push_back(Defaults::VERSION_KEY);
 
-        for(size_t i = 0; i < oauth_keys.size(); i++)
-            if (rawKeyValuePairs.find(oauth_keys[i]) != rawKeyValuePairs.end())
-                oauthKeyValuePairs[oauth_keys[i]] = rawKeyValuePairs[oauth_keys[i]];
+        for(size_t i = 0; i < oauth_keys.size(); i++) {
+            assert(rawKeyValuePairs.count(oauth_keys[i]) <= 1);
+            KeyValuePairs::iterator oauth_key_it = rawKeyValuePairs.find(oauth_keys[i]);
+            if (oauth_key_it != rawKeyValuePairs.end())
+                ReplaceOrInsertKeyValuePair(oauthKeyValuePairs, oauth_keys[i], oauth_key_it->second);
+        }
         getStringFromOAuthKeyValuePairs( oauthKeyValuePairs, rawParams, separator );
     }
     else if (string_type == QueryStringString) {

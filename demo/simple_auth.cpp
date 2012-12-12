@@ -101,8 +101,9 @@ int main(int argc, char** argv) {
     std::cout << "You may now access protected resources using the access tokens above." << std::endl;
     std::cout << std::endl;
 
-    if (access_token_resp_data.find("screen_name") != access_token_resp_data.end())
-        std::cout << "Also extracted screen name from access token response: " << access_token_resp_data["screen_name"] << std::endl;
+    std::pair<OAuth::KeyValuePairs::iterator, OAuth::KeyValuePairs::iterator> screen_name_its = access_token_resp_data.equal_range("screen_name");
+    for(OAuth::KeyValuePairs::iterator it = screen_name_its.first; it != screen_name_its.second; it++)
+        std::cout << "Also extracted screen name from access token response: " << it->second << std::endl;
 
     // E.g., to use the access token, you'd create a new OAuth using
     // it, discarding the request_token:

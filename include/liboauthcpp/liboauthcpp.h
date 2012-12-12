@@ -20,7 +20,7 @@ typedef enum _RequestType
 } // namespace Http
 
 typedef std::list<std::string> KeyValueList;
-typedef std::map<std::string, std::string> KeyValuePairs;
+typedef std::multimap<std::string, std::string> KeyValuePairs;
 
 /** URL encode a string value.
  */
