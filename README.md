@@ -8,6 +8,9 @@ OAuth-specific functionality and providing a nice interface for it.
 If you already have infrastructure for making HTTP requests and are
 looking to add OAuth support, liboauthcpp is for you.
 
+liboauthcpp currently implements OAuth 1.0a (see
+http://tools.ietf.org/html/rfc5849).
+
 Requirements
 ------------
 
