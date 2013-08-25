@@ -12,7 +12,7 @@ std::string consumer_secret = ""; // Secret from Twitter
 std::string oauth_token = ""; // User-specific token acquired by auth process
 std::string oauth_token_secret = ""; // User-specific secret acquired by auth process.
 // An example resource to be accessed, along with parameters for the request
-std::string oauth_protected_resource = "https://api.twitter.com/1/statuses/home_timeline.json";
+std::string oauth_protected_resource = "https://api.twitter.com/1.1/statuses/home_timeline.json";
 std::string oauth_protected_resource_params = "count=5";
 
 std::string getUserString(std::string prompt) {
