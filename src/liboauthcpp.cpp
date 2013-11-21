@@ -127,7 +127,14 @@ Token Token::extract(const KeyValuePairs& response) {
 }
 
 
+bool Client::initialized = false;
 
+void Client::initialize() {
+    if(!initialized) {
+        srand( time( NULL ) );
+        initialized = true;
+    }
+}
 
 Client::Client(const Consumer* consumer)
  : mConsumer(consumer),
@@ -162,16 +169,13 @@ Client::~Client()
 *--*/
 void Client::generateNonceTimeStamp()
 {
+    // Make sure the random seed has been initialized
+    Client::initialize();
+
     char szTime[Defaults::BUFFSIZE];
     char szRand[Defaults::BUFFSIZE];
     memset( szTime, 0, Defaults::BUFFSIZE );
     memset( szRand, 0, Defaults::BUFFSIZE );
-	static bool initialized = false;
-	if(!initialized)
-	{
-		srand( time( NULL ) );
-		initialized = true;
-	}
 
     sprintf( szRand, "%x", rand()%1000 );
     sprintf( szTime, "%ld", time( NULL ) );

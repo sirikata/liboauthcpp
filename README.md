@@ -33,6 +33,23 @@ If your own project uses CMake you can also include
 build/CMakeLists.txt directly into your project and reference the
 target "oauthcpp", a static library, in your project.
 
+Thread Safety
+-------------
+
+liboauthcpp doesn't provide any thread safety guarantees. That said, there is
+very little shared state, and some classes (e.g. Consumer) are naturally
+immutable and therefore thread safe. Similarly, nearly the entire library uses
+no static/shared state, so as long as you create separate objects for separate
+threads, you should be safe.
+
+The one exception is nonces: the Client class needs to generate a nonce for
+authorization. To do so, the random number generator needs to be seeded. We do
+this with the current time, but fast, repeated use of the Client class from
+different threads could result in the same nonce. To avoid requiring an entire
+thread library just for this one case, you can call Client::initialize()
+explicitly before using the Client from multiple threads. For single-threaded
+use, you are not required to call it.
+
 Demos
 -----
 There are two demos included in the demos/ directory, and they are built by

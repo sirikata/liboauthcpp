@@ -111,6 +111,13 @@ private:
 
 class Client {
 public:
+    /** Perform static initialization. This will be called automatically, but
+     *  you can call it explicitly to ensure thread safety. If you do not call
+     *  this explicitly before using the Client class, the same nonce may be
+     *  generated twice.
+     */
+    static void initialize();
+
     /** Construct an OAuth Client using only a consumer key and
      *  secret. You can use this to start a three-legged
      *  authentication (to acquire an access token for a user) or for
@@ -178,6 +185,8 @@ private:
      * information.
      */
     Client();
+
+    static bool initialized;
 
     /* OAuth data */
     const Consumer* mConsumer;
