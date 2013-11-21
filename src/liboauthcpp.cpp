@@ -166,7 +166,13 @@ void Client::generateNonceTimeStamp()
     char szRand[Defaults::BUFFSIZE];
     memset( szTime, 0, Defaults::BUFFSIZE );
     memset( szRand, 0, Defaults::BUFFSIZE );
-    srand( time( NULL ) );
+	static bool initialized = false;
+	if(!initialized)
+	{
+		srand( time( NULL ) );
+		initialized = true;
+	}
+
     sprintf( szRand, "%x", rand()%1000 );
     sprintf( szTime, "%ld", time( NULL ) );
 
