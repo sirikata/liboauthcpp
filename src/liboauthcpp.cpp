@@ -6,6 +6,9 @@
 #include <ctime>
 #include <vector>
 #include <cassert>
+#include <mutex>
+
+std::once_flag g_srand_init_flag;
 
 namespace OAuth {
 
@@ -166,12 +169,9 @@ void Client::generateNonceTimeStamp()
     char szRand[Defaults::BUFFSIZE];
     memset( szTime, 0, Defaults::BUFFSIZE );
     memset( szRand, 0, Defaults::BUFFSIZE );
-	static bool initialized = false;
-	if(!initialized)
-	{
-		srand( time( NULL ) );
-		initialized = true;
-	}
+
+	/* Only initialize it once */
+	std::call_once(g_srand_init_flag, []() { srand( time( NULL ) );} );
 
     sprintf( szRand, "%x", rand()%1000 );
     sprintf( szTime, "%ld", time( NULL ) );
