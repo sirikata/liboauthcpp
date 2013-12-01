@@ -332,6 +332,12 @@ bool Client::getSignature( const Http::RequestType eType,
         }
         break;
 
+      case Http::Put:
+        {
+            sigBase.assign( "PUT&" );
+        }
+        break;
+
     default:
         {
             return false;
