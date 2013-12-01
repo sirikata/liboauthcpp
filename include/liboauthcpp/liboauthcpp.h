@@ -15,7 +15,8 @@ typedef enum _RequestType
     Head,
     Get,
     Post,
-    Delete
+    Delete,
+    Put
 } RequestType;
 } // namespace Http
 
