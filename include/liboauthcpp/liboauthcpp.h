@@ -24,9 +24,36 @@ typedef enum _RequestType
 typedef std::list<std::string> KeyValueList;
 typedef std::multimap<std::string, std::string> KeyValuePairs;
 
-/** URL encode a string value.
+/** Deprecated. Complete percent encoding of URLs. Equivalent to
+ *  PercentEncode.
  */
 std::string URLEncode(const std::string& decoded);
+
+/** Percent encode a string value. This version is *thorough* about
+ *  encoding: it encodes all reserved characters (even those safe in
+ *  http URLs) and "other" characters not specified by the URI
+ *  spec. If you're looking to encode http:// URLs, see the
+ *  HttpEncode* functions.
+ */
+std::string PercentEncode(const std::string& decoded);
+
+/** Percent encodes the path portion of an http URL (i.e. the /foo/bar
+ *  in http://foo/bar?a=1&b=2). This encodes minimally, so reserved
+ *  subdelimiters that have no meaning in the path are *not* encoded.
+ */
+std::string HttpEncodePath(const std::string& decoded);
+
+/** Percent encodes a query string key in an http URL (i.e. 'a', 'b' in
+ *  http://foo/bar?a=1&b=2). This encodes minimally, so reserved subdelimiters
+ *  that have no meaning in the query string are *not* encoded.
+ */
+std::string HttpEncodeQueryKey(const std::string& decoded);
+
+/** Percent encodes a query string value in an http URL (i.e. '1', '2' in
+ *  http://foo/bar?a=1&b=2). This encodes minimally, so reserved subdelimiters
+ *  that have no meaning in the query string are *not* encoded.
+ */
+std::string HttpEncodeQueryValue(const std::string& decoded);
 
 /** Parses key value pairs into a map.
  *  \param encoded the encoded key value pairs, i.e. the url encoded parameters

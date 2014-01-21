@@ -37,6 +37,75 @@ If your own project uses CMake you can also include
 build/CMakeLists.txt directly into your project and reference the
 target "oauthcpp", a static library, in your project.
 
+Percent (URL) Encoding
+----------------------
+
+To get correct results, you need to pass your URL properly encoded to
+liboauthcpp. If you are not at all familiar, you should probably start
+by reading the [URI Spec](http://tools.ietf.org/html/rfc3986), especially
+Section 2. Alternatively,
+[this article](http://blog.lunatech.com/2009/02/03/what-every-web-developer-must-know-about-url-encoding)
+gives a more readable overview.
+
+The basic idea is that there are 3 classes of characters: reserved,
+unreserved, and other. Reserved characters are special characters that
+are used in the URI syntax itself, e.g. ':' (after the scheme), '/'
+(the hierarchical path separator), and '?'  (prefixing the query
+string). Unreserved characters are characters that are always safe to
+include unencoded, e.g. the alphanumerics. Other characters must
+always be encoded, mainly covering special characters like ' ', '<' or
+'>', and '{' or '}'.
+
+The basic rule is that reserved characters must be encoded if they
+appear in any part of the URI when not being used as a
+separator. Unreserved characters are always safe. And the other
+characters they didn't know if they would be safe or not so they must
+always be encoded.
+
+Unfortunately, the reserved set is a bit more complicated. They are
+broken down into 'general delimiters' and 'sub delimiters'. The ones
+already mentioned, like ':', can appear in many forms of URIs (say,
+http, ftp, about, gopher, mailto, etc. Those are called general
+delimiters. Others (e.g. '(', ')', '!', '$', '+', ',', '=', and more)
+are called subdelimiters because their use depends on the URI
+scheme. Worse, their use depends on the *part of the URI*. Depending
+on the particular URI scheme, these may or may not have to be encoded,
+and it might also depend on where they appear. (As an example, an '&'
+in an http URI isn't an issue if it appears in the path -- before the
+query string -- i.e. before a '?' appears. Worse, '=' can appear unencoded in
+the path, or in a query parameter value, but not in a query parameter key since
+it would be interpreted as the end of the key.)
+
+*Additionally*, in many cases it is permitted to encode a character
+unnecessarily and the result is supposed to be the same. This means
+that it's possible to percent encode some URLs in multiple ways
+(e.g. encoding the unreserved set unnecessarily). It is possible, but not
+guaranteed, that if you pass *exactly* the same URI to liboauthcpp and the
+OAuth server, it will handle it regardless of the variant of encoding, so long
+as it is a valid encoding.
+
+The short version: percent encoding a URL properly is non-trivial and
+you can even encode the same URL multiple ways, but has to be done
+correctly so that the OAuth signature can be computed. Sadly,
+"correctly" in this case really means "in whatever way the server your
+interacting with wants it encoded".
+
+Internally, liboauthcpp needs to do another step of percent encoding,
+but the OAuth spec is very precise about how that works (none of these
+scheme-dependent issues). liboauth applies this percent encoding, but
+assumes that you have encoded your URLs properly. This assumption
+makes sense since the actual request is made separately, and the URI
+has to be specified in it, so you should already have a form which the
+server will accept.
+
+However, in order to aid you, a very simple percent encoding API is exposed. It
+should help you encode URLs minimally and in a way that many services accept. In
+most cases you should use `HttpPercentEncodePath()`,
+`HttpPercentEncodeQueryKey()`, and `HttpPercentEncodeQueryValue()` to encode
+those parts of your http URL, then combine them and pass them to liboauthcpp for
+signing.
+
+
 Thread Safety
 -------------
 

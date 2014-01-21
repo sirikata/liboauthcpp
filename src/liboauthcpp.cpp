@@ -31,8 +31,24 @@ namespace Defaults
 /** std::string -> std::string conversion function */
 typedef std::string(*StringConvertFunction)(const std::string&);
 
+std::string PercentEncode(const std::string& decoded) {
+    return urlencode(decoded, URLEncode_Everything);
+}
+
 std::string URLEncode(const std::string& decoded) {
-    return urlencode(decoded);
+    return PercentEncode(decoded);
+}
+
+std::string HttpEncodePath(const std::string& decoded) {
+    return urlencode(decoded, URLEncode_Path);
+}
+
+std::string HttpEncodeQueryKey(const std::string& decoded) {
+    return urlencode(decoded, URLEncode_QueryKey);
+}
+
+std::string HttpEncodeQueryValue(const std::string& decoded) {
+    return urlencode(decoded, URLEncode_QueryValue);
 }
 
 namespace {
@@ -226,7 +242,9 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
                                           const bool urlEncodeValues,
                                           const bool generateTimestamp )
 {
-    StringConvertFunction encoder = (urlEncodeValues ? URLEncode : PassThrough);
+    // Encodes value part of key-value pairs depending on type of output (query
+    // string vs. HTTP headers.
+    StringConvertFunction value_encoder = (urlEncodeValues ? HttpEncodeQueryValue : PassThrough);
 
     /* Generate nonce and timestamp if required */
     if( generateTimestamp )
@@ -235,10 +253,10 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     }
 
     /* Consumer key and its value */
-    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::CONSUMERKEY_KEY, encoder(mConsumer->key()));
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::CONSUMERKEY_KEY, value_encoder(mConsumer->key()));
 
     /* Nonce key and its value */
-    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::NONCE_KEY, encoder(m_nonce));
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::NONCE_KEY, value_encoder(m_nonce));
 
     /* Signature if supplied */
     if( oauthSignature.length() )
@@ -254,18 +272,18 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::SIGNATUREMETHOD_KEY, std::string( "HMAC-SHA1" ));
 
     /* Timestamp */
-    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TIMESTAMP_KEY, encoder(m_timeStamp));
+    ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TIMESTAMP_KEY, value_encoder(m_timeStamp));
 
     /* Token */
     if( mToken && mToken->key().length() )
     {
-        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TOKEN_KEY, encoder(mToken->key()));
+        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::TOKEN_KEY, value_encoder(mToken->key()));
     }
 
     /* Verifier */
     if( includeOAuthVerifierPin && mToken && mToken->pin().length() )
     {
-        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::VERIFIER_KEY, encoder(mToken->pin()));
+        ReplaceOrInsertKeyValuePair(keyValueMap, Defaults::VERIFIER_KEY, value_encoder(mToken->pin()));
     }
 
     /* Version */
@@ -358,9 +376,9 @@ bool Client::getSignature( const Http::RequestType eType,
         }
         break;
     }
-    sigBase.append( urlencode( rawUrl ) );
+    sigBase.append( PercentEncode( rawUrl ) );
     sigBase.append( "&" );
-    sigBase.append( urlencode( rawParams ) );
+    sigBase.append( PercentEncode( rawParams ) );
 
     /* Now, hash the signature base string using HMAC_SHA1 class */
     CHMAC_SHA1 objHMACSHA1;
@@ -370,11 +388,11 @@ bool Client::getSignature( const Http::RequestType eType,
     memset( strDigest, 0, Defaults::BUFFSIZE_LARGE );
 
     /* Signing key is composed of consumer_secret&token_secret */
-    secretSigningKey.assign( URLEncode(mConsumer->secret()) );
+    secretSigningKey.assign( PercentEncode(mConsumer->secret()) );
     secretSigningKey.append( "&" );
     if( mToken && mToken->secret().length() )
     {
-        secretSigningKey.append( URLEncode(mToken->secret()) );
+        secretSigningKey.append( PercentEncode(mToken->secret()) );
     }
 
     objHMACSHA1.HMAC_SHA1( (unsigned char*)sigBase.c_str(),
@@ -387,7 +405,7 @@ bool Client::getSignature( const Http::RequestType eType,
     std::string base64Str = base64_encode( strDigest, 20 /* SHA 1 digest is 160 bits */ );
 
     /* Do an url encode */
-    oAuthSignature = urlencode( base64Str );
+    oAuthSignature = PercentEncode( base64Str );
 
     return ( oAuthSignature.length() ) ? true : false;
 }

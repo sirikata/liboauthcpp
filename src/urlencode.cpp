@@ -1,4 +1,5 @@
 #include "urlencode.h"
+#include <cassert>
 
 std::string char2hex( char dec )
 {
@@ -15,13 +16,14 @@ std::string char2hex( char dec )
 	return r;
 }
 
-std::string urlencode( const std::string &c )
+std::string urlencode( const std::string &c, URLEncodeType enctype)
 {
 
     std::string escaped;
 	int max = c.length();
 	for(int i=0; i<max; i++)
 	{
+            // Unreserved chars
 		if ( (48 <= c[i] && c[i] <= 57) ||//0-9
 			(65 <= c[i] && c[i] <= 90) ||//ABC...XYZ
 			(97 <= c[i] && c[i] <= 122) || //abc...xyz
@@ -30,10 +32,70 @@ std::string urlencode( const std::string &c )
 		{
 			escaped.append( &c[i], 1);
 		}
+                else if (c[i] != ':' && c[i] != '/' && c[i] != '?' && c[i] != '#' &&
+                    c[i] != '[' && c[i] != ']' && c[i] != '@' && c[i] != '%' &&
+
+                    c[i] != '!' && c[i] != '$' && c[i] != '&' && c[i] != '\'' &&
+                    c[i] != '(' && c[i] != ')' && c[i] != '*' && c[i] != '+' &&
+                    c[i] != ',' && c[i] != ';' && c[i] != '=')
+                {
+                    // Characters not in unreserved (first if block) and not in
+                    // the reserved set are always encoded.
+                    escaped.append("%");
+                    escaped.append( char2hex(c[i]) );//converts char 255 to string "FF"
+                }
 		else
 		{
-			escaped.append("%");
-			escaped.append( char2hex(c[i]) );//converts char 255 to string "FF"
+                    // Finally, the reserved set. Encoding here depends on the
+                    // context (where in the URI we are, what type of URI, and
+                    // which character).
+
+                    bool enc = false;
+
+                    // Always encode reserved gen-delims + '%' (which always
+                    // needs encoding
+                    if (c[i] == ':' || c[i] == '/' || c[i] == '?' || c[i] == '#' ||
+                        c[i] == '[' || c[i] == ']' || c[i] == '@' || c[i] == '%')
+                    {
+                        enc = true;
+                    }
+                    else {
+                        switch (enctype) {
+                          case URLEncode_Everything:
+                            enc = true;
+                            break;
+                          case URLEncode_Path:
+                            // Only reserved sub-delim that needs encoding is %,
+                            // taken care of above. Otherwise, leave unencoded
+                            enc = false;
+                            break;
+                          case URLEncode_QueryKey:
+                            if (c[i] == '&' ||
+                                c[i] == '+' ||
+                                c[i] == '=')
+                                enc = true;
+                            else
+                                enc = false;
+                            break;
+                          case URLEncode_QueryValue:
+                            if (c[i] == '&' ||
+                                c[i] == '+')
+                                enc = true;
+                            else
+                                enc = false;
+                            break;
+                          default:
+                            assert(false && "Unknown urlencode type");
+                            break;
+                        }
+                    }
+
+                    if (enc) {
+                        escaped.append("%");
+                        escaped.append( char2hex(c[i]) );//converts char 255 to string "FF"
+                    } else {
+			escaped.append( &c[i], 1);
+                    }
 		}
 	}
 	return escaped;

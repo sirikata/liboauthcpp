@@ -5,6 +5,12 @@
 #include <string>
 
 std::string char2hex( char dec );
-std::string urlencode( const std::string &c );
+enum URLEncodeType {
+    URLEncode_Everything,
+    URLEncode_Path,
+    URLEncode_QueryKey,
+    URLEncode_QueryValue,
+};
+std::string urlencode( const std::string &c, URLEncodeType enctype );
 
 #endif // __URLENCODE_H__
