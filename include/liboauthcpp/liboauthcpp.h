@@ -5,6 +5,7 @@
 #include <list>
 #include <map>
 #include <stdexcept>
+#include <ctime>
 
 namespace OAuth {
 
@@ -118,6 +119,11 @@ public:
      *  generated twice.
      */
     static void initialize();
+    /** Alternative initialize method which lets you specify the seed and
+     *  control the timestamp used in generating signatures. This only exists
+     *  for testing purposes and should not be used in practice.
+     */
+    static void initialize(int nonce, time_t timestamp);
 
     /** Construct an OAuth Client using only a consumer key and
      *  secret. You can use this to start a three-legged
@@ -188,6 +194,8 @@ private:
     Client();
 
     static bool initialized;
+    static int testingNonce;
+    static time_t testingTimestamp;
 
     /* OAuth data */
     const Consumer* mConsumer;

@@ -45,6 +45,11 @@ IF(NOT CMAKE_BUILD_TYPE)
     "Build types include: Default Debug Release None RelWithDebInfo." FORCE
     )
 ENDIF()
+MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+# And add a definition so code can tell
+IF(CMAKE_BUILD_TYPE EQUAL "Debug")
+  ADD_DEFINITIONS(-DLIBOAUTHCPP_DEBUG)
+ENDIF()
 
 # Define a few helpful directories
 IF(NOT LIBOAUTHCPP_TOP_LEVEL)
@@ -54,6 +59,7 @@ GET_FILENAME_COMPONENT(LIBOAUTHCPP_TOP_LEVEL ${LIBOAUTHCPP_TOP_LEVEL} ABSOLUTE)
 MESSAGE(STATUS "Base directory: ${LIBOAUTHCPP_TOP_LEVEL}")
 SET(LIBOAUTHCPP_INCLUDE ${LIBOAUTHCPP_TOP_LEVEL}/include)
 SET(LIBOAUTHCPP_SRC ${LIBOAUTHCPP_TOP_LEVEL}/src)
+SET(LIBOAUTHCPP_TEST ${LIBOAUTHCPP_TOP_LEVEL}/tests)
 SET(LIBOAUTHCPP_DEMO ${LIBOAUTHCPP_TOP_LEVEL}/demo)
 
 # CMake doesn't seem to allow adding include directories for specific
@@ -82,6 +88,31 @@ INSTALL(TARGETS oauthcpp
 INSTALL(DIRECTORY
   ${LIBOAUTHCPP_INCLUDE}/ DESTINATION include
 )
+
+# Allow disabling of tests
+IF(NOT LIBOAUTHCPP_TESTS)
+  SET(LIBOAUTHCPP_BUILD_TESTS TRUE CACHE BOOL "Whether to build tests")
+ELSE()
+  SET(LIBOAUTHCPP_BUILD_TESTS LIBOAUTHCPP_BUILD_TESTS CACHE BOOL "Whether to build tests")
+ENDIF()
+
+IF(LIBOAUTHCPP_BUILD_TESTS)
+
+  # A simple demo of authentication -- getting from consumer
+  # key/secret all the way to an access token for a user.The user
+  # manually performs HTTP steps in a browser.
+  SET(LIBOATHCPP_TEST_SOURCES
+    ${LIBOAUTHCPP_TEST}/main.cpp
+    ${LIBOAUTHCPP_TEST}/testutil.cpp
+    )
+  ADD_EXECUTABLE(tests ${LIBOATHCPP_TEST_SOURCES})
+  TARGET_LINK_LIBRARIES(tests oauthcpp)
+
+  # Target for running the tests
+  ADD_CUSTOM_TARGET(test
+    tests
+    )
+ENDIF() #LIBOAUTHCPP_BUILD_TESTS
 
 # Allow disabling of the demos
 IF(NOT DEFINED LIBOAUTHCPP_BUILD_DEMOS)

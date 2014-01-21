@@ -3,7 +3,6 @@
 #include "base64.h"
 #include "urlencode.h"
 #include <cstdlib>
-#include <ctime>
 #include <vector>
 #include <cassert>
 
@@ -128,6 +127,8 @@ Token Token::extract(const KeyValuePairs& response) {
 
 
 bool Client::initialized = false;
+int Client::testingNonce = 0;
+time_t Client::testingTimestamp = 0;
 
 void Client::initialize() {
     if(!initialized) {
@@ -135,6 +136,15 @@ void Client::initialize() {
         initialized = true;
     }
 }
+
+void Client::initialize(int nonce, time_t timestamp) {
+    if(!initialized) {
+        testingNonce = nonce;
+        testingTimestamp = timestamp;
+        initialized = true;
+    }
+}
+
 
 Client::Client(const Consumer* consumer)
  : mConsumer(consumer),
@@ -177,8 +187,12 @@ void Client::generateNonceTimeStamp()
     memset( szTime, 0, Defaults::BUFFSIZE );
     memset( szRand, 0, Defaults::BUFFSIZE );
 
-    sprintf( szRand, "%x", rand()%1000 );
-    sprintf( szTime, "%ld", time( NULL ) );
+    // Any non-zero timestamp triggers testing mode with fixed values. Fixing
+    // both values makes life easier because generating a signature is
+    // idempotent -- otherwise using macros can cause double evaluation and
+    // incorrect results because of repeated calls to rand().
+    sprintf( szRand, "%x", ((testingTimestamp != 0) ? testingNonce : rand()%1000) );
+    sprintf( szTime, "%ld", ((testingTimestamp != 0) ? testingTimestamp : time( NULL )) );
 
     m_nonce.assign( szTime );
     m_nonce.append( szRand );

@@ -11,6 +11,10 @@ looking to add OAuth support, liboauthcpp is for you.
 liboauthcpp currently implements OAuth 1.0a (see
 http://tools.ietf.org/html/rfc5849).
 
+Buildbot
+--------
+[![Build Status](https://secure.travis-ci.org/sirikata/liboauthcpp.png)](http://travis-ci.org/sirikata/liboauthcpp)
+
 Requirements
 ------------
 
