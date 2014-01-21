@@ -38,6 +38,7 @@ public:
         // Reserved sub-delims
         ASSERT_EQUAL(URLEncode("!"), "%21", "Reserved character '!' should be percent encoded");
         ASSERT_EQUAL(URLEncode("$"), "%24", "Reserved character '$' should be percent encoded");
+        ASSERT_EQUAL(URLEncode("%"), "%25", "Reserved character '&' should be percent encoded");
         ASSERT_EQUAL(URLEncode("&"), "%26", "Reserved character '&' should be percent encoded");
         ASSERT_EQUAL(URLEncode("'"), "%27", "Reserved character ''' should be percent encoded");
         ASSERT_EQUAL(URLEncode("("), "%28", "Reserved character '(' should be percent encoded");
