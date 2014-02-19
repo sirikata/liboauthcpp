@@ -453,7 +453,7 @@ std::string Client::buildOAuthParameterString(
         separator = ",";
         do_urlencode = false;
     }
-    else if (string_type == QueryStringString) {
+    else { // QueryStringString
         separator = "&";
         do_urlencode = true;
     }
