@@ -34,15 +34,13 @@ void CHMAC_SHA1::HMAC_SHA1(BYTE *text, int text_len, BYTE *key, int key_len, BYT
 		m_ipad[i] ^= SHA1_Key[i];
 	}
 
-	/* STEP 3 */
-	memcpy(AppendBuf1, m_ipad, sizeof(m_ipad));
-	memcpy(AppendBuf1 + sizeof(m_ipad), text, text_len);
-
 	/* STEP 4 */
 	CSHA1::Reset();
-	CSHA1::Update((UINT_8 *)AppendBuf1, sizeof(m_ipad) + text_len);
+        CSHA1::Update((UINT_8 *)m_ipad, sizeof(m_ipad));
+        CSHA1::Update((UINT_8 *)text, text_len);
 	CSHA1::Final();
 
+        char szReport[SHA1_DIGEST_LENGTH];
 	CSHA1::GetHash((UINT_8 *)szReport);
 
 	/* STEP 5 */
@@ -51,13 +49,10 @@ void CHMAC_SHA1::HMAC_SHA1(BYTE *text, int text_len, BYTE *key, int key_len, BYT
 		m_opad[j] ^= SHA1_Key[j];
 	}
 
-	/* STEP 6 */
-	memcpy(AppendBuf2, m_opad, sizeof(m_opad));
-	memcpy(AppendBuf2 + sizeof(m_opad), szReport, SHA1_DIGEST_LENGTH);
-
 	/*STEP 7 */
 	CSHA1::Reset();
-	CSHA1::Update((UINT_8 *)AppendBuf2, sizeof(m_opad) + SHA1_DIGEST_LENGTH);
+        CSHA1::Update((UINT_8 *)m_opad, sizeof(m_opad));
+        CSHA1::Update((UINT_8 *)szReport, SHA1_DIGEST_LENGTH);
 	CSHA1::Final();
 
 	CSHA1::GetHash((UINT_8 *)digest);
