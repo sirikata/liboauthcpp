@@ -31,6 +31,16 @@ namespace Defaults
 /** std::string -> std::string conversion function */
 typedef std::string(*StringConvertFunction)(const std::string&);
 
+LogLevel gLogLevel = LogLevelNone;
+
+void SetLogLevel(LogLevel lvl) {
+    gLogLevel = lvl;
+}
+#define LOG(lvl, msg)                                           \
+    do  {                                                       \
+        if (lvl <= gLogLevel) std::cerr << "OAUTH: " << msg << std::endl; \
+    } while(0)
+
 std::string PercentEncode(const std::string& decoded) {
     return urlencode(decoded, URLEncode_Everything);
 }
@@ -54,6 +64,19 @@ std::string HttpEncodeQueryValue(const std::string& decoded) {
 namespace {
 std::string PassThrough(const std::string& decoded) {
     return decoded;
+}
+
+std::string RequestTypeString(const Http::RequestType rt) {
+    switch(rt) {
+      case Http::Invalid: return "Invalid Request Type"; break;
+      case Http::Head: return "HEAD"; break;
+      case Http::Get: return "GET"; break;
+      case Http::Post: return "POST"; break;
+      case Http::Delete: return "DELETE"; break;
+      case Http::Put: return "PUT"; break;
+      default: return "Unknown Request Type"; break;
+    }
+    return "";
 }
 }
 
@@ -336,6 +359,7 @@ bool Client::getSignature( const Http::RequestType eType,
     /* Build a string using key-value pairs */
     paramsSeperator = "&";
     getStringFromOAuthKeyValuePairs( rawKeyValuePairs, rawParams, paramsSeperator );
+    LOG(LogLevelDebug, "Normalized parameters: " << rawParams);
 
     /* Start constructing base signature string. Refer http://dev.twitter.com/auth#intro */
     switch( eType )
@@ -379,6 +403,7 @@ bool Client::getSignature( const Http::RequestType eType,
     sigBase.append( PercentEncode( rawUrl ) );
     sigBase.append( "&" );
     sigBase.append( PercentEncode( rawParams ) );
+    LOG(LogLevelDebug, "Signature base string: " << sigBase);
 
     /* Now, hash the signature base string using HMAC_SHA1 class */
     CHMAC_SHA1 objHMACSHA1;
@@ -403,9 +428,11 @@ bool Client::getSignature( const Http::RequestType eType,
 
     /* Do a base64 encode of signature */
     std::string base64Str = base64_encode( strDigest, 20 /* SHA 1 digest is 160 bits */ );
+    LOG(LogLevelDebug, "Signature: " << base64Str);
 
     /* Do an url encode */
     oAuthSignature = PercentEncode( base64Str );
+    LOG(LogLevelDebug, "Percent-encoded Signature: " << oAuthSignature);
 
     return ( oAuthSignature.length() ) ? true : false;
 }
@@ -446,6 +473,8 @@ std::string Client::buildOAuthParameterString(
     std::string oauthSignature;
     std::string paramsSeperator;
     std::string pureUrl( rawUrl );
+
+    LOG(LogLevelDebug, "Signing request " << RequestTypeString(eType) << " " << rawUrl << " " << rawData);
 
     std::string separator;
     bool do_urlencode;

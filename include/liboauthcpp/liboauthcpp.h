@@ -24,6 +24,18 @@ typedef enum _RequestType
 typedef std::list<std::string> KeyValueList;
 typedef std::multimap<std::string, std::string> KeyValuePairs;
 
+typedef enum _LogLevel
+{
+    LogLevelNone = 0,
+    LogLevelDebug = 1
+} LogLevel;
+
+/** Set the log level. Log messages are sent to stderr. Currently, and for the
+ *  foreseeable future, logging only consists of debug messages to help track
+ *  down protocol implementation issues.
+ */
+void SetLogLevel(LogLevel lvl);
+
 /** Deprecated. Complete percent encoding of URLs. Equivalent to
  *  PercentEncode.
  */

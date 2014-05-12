@@ -25,6 +25,8 @@ std::string getUserString(std::string prompt) {
 }
 
 int main(int argc, char** argv) {
+    if (argc > 1 && std::string(argv[1]) == std::string("--debug"))
+        OAuth::SetLogLevel(OAuth::LogLevelDebug);
 
     // Initialization
     if (consumer_key.empty()) consumer_key = getUserString("Enter consumer key:");
