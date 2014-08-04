@@ -22,6 +22,7 @@ public:
         OAuth::Token token(oauth_token, oauth_token_secret);
 
         // This sets up the client class to generate reproducible results.
+        Client::__resetInitialize();
         Client::initialize(100, 1390268986);
         OAuth::Client oauth(&consumer, &token);
 

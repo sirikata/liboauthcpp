@@ -164,6 +164,10 @@ public:
      */
     static void initialize(int nonce, time_t timestamp);
 
+    /** Exposed for testing only.
+     */
+    static void __resetInitialize();
+
     /** Construct an OAuth Client using only a consumer key and
      *  secret. You can use this to start a three-legged
      *  authentication (to acquire an access token for a user) or for

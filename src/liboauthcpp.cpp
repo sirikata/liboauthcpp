@@ -184,6 +184,11 @@ void Client::initialize(int nonce, time_t timestamp) {
     }
 }
 
+void Client::__resetInitialize() {
+    testingNonce = 0;
+    testingTimestamp = 0;
+    initialized = false;
+}
 
 Client::Client(const Consumer* consumer)
  : mConsumer(consumer),
@@ -230,11 +235,12 @@ void Client::generateNonceTimeStamp()
     // both values makes life easier because generating a signature is
     // idempotent -- otherwise using macros can cause double evaluation and
     // incorrect results because of repeated calls to rand().
-    sprintf( szRand, "%x", ((testingTimestamp != 0) ? testingNonce : rand()%1000) );
+    sprintf( szRand, "%x", ((testingTimestamp != 0) ? testingNonce : rand()) );
     sprintf( szTime, "%ld", ((testingTimestamp != 0) ? testingTimestamp : time( NULL )) );
 
     m_nonce.assign( szTime );
     m_nonce.append( szRand );
+
     m_timeStamp.assign( szTime );
 }
 
