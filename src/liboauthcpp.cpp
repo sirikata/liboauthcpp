@@ -321,16 +321,8 @@ bool Client::buildOAuthTokenKeyValuePairs( const bool includeOAuthVerifierPin,
     /* Data if it's present */
     if( rawData.length() )
     {
-        /* Data should already be urlencoded once */
-        std::string dummyStrKey;
-        std::string dummyStrValue;
-        size_t nPos = rawData.find_first_of( "=" );
-        if( std::string::npos != nPos )
-        {
-            dummyStrKey = rawData.substr( 0, nPos );
-            dummyStrValue = rawData.substr( nPos + 1 );
-            ReplaceOrInsertKeyValuePair(keyValueMap, dummyStrKey, dummyStrValue);
-        }
+        KeyValuePairs encodedPairs = ParseKeyValuePairs(rawData);
+        keyValueMap.insert(encodedPairs.begin(), encodedPairs.end());
     }
 
     return ( keyValueMap.size() ) ? true : false;
