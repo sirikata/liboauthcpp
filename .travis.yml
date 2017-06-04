@@ -1,8 +1,25 @@
 language: cpp
 
-compiler:
-  - gcc
-  - clang
+cache: ccache
+sudo: false
+matrix:
+  include:
+    - os: linux
+      dist: precise
+      compiler: gcc
+    - os: linux
+      dist: trusty
+      compiler: gcc
+    - os: linux
+      dist: precise
+      compiler: clang
+    - os: linux
+      dist: trusty
+      compiler: clang
+    - os: osx
+      compiler: gcc
+    - os: osx
+      compiler: clang
 
 script:
   - cd build
