@@ -150,20 +150,20 @@ public:
         ASSERT_EQUAL(HttpEncodeQueryKey("]"), "%5D", "Reserved gen-delim '[' should be percent encoded (http query string encoding)");
         ASSERT_EQUAL(HttpEncodeQueryKey("@"), "%40", "Reserved gen-delim '@' should be percent encoded (http query string encoding)");
         // Reserved sub-delims
-        ASSERT_EQUAL(HttpEncodeQueryKey("!"), "!", "Reserved sub-delim '!' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey("$"), "$", "Reserved sub-delim '$' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey("!"), "%21", "Reserved sub-delim '!' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey("$"), "%24", "Reserved sub-delim '$' should be percent encoded (http query string encoding)");
         ASSERT_EQUAL(HttpEncodeQueryKey("%"), "%25", "Reserved sub-delim '%' should be percent encoded (http query string encoding)");
         //  - '&' is the query arg separator
         ASSERT_EQUAL(HttpEncodeQueryKey("&"), "%26", "Reserved sub-delim '&' should be percent encoded (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey("'"), "'", "Reserved sub-delim ''' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey("("), "(", "Reserved sub-delim '(' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey(")"), ")", "Reserved sub-delim ')' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey("*"), "*", "Reserved sub-delim '*' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey("'"), "%27", "Reserved sub-delim ''' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey("("), "%28", "Reserved sub-delim '(' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey(")"), "%29", "Reserved sub-delim ')' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey("*"), "%2A", "Reserved sub-delim '*' should be percent encoded (http query string encoding)");
         //  - '+' has to be encoded in query strings because spaces historically
         //    were convereted to '+'.
         ASSERT_EQUAL(HttpEncodeQueryKey("+"), "%2B", "Reserved sub-delim '+' should be percent encoded (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey(","), ",", "Reserved sub-delim ',' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryKey(";"), ";", "Reserved sub-delim ';' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey(","), "%2C", "Reserved sub-delim ',' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryKey(";"), "%3B", "Reserved sub-delim ';' should be percent encoded (http query string encoding)");
         //  - '=' is the key=value separator
         ASSERT_EQUAL(HttpEncodeQueryKey("="), "%3D", "Reserved sub-delim '=' should be percent encoded (http query string encoding)");
 
@@ -205,22 +205,22 @@ public:
         ASSERT_EQUAL(HttpEncodeQueryValue("]"), "%5D", "Reserved gen-delim '[' should be percent encoded (http query string encoding)");
         ASSERT_EQUAL(HttpEncodeQueryValue("@"), "%40", "Reserved gen-delim '@' should be percent encoded (http query string encoding)");
         // Reserved sub-delims
-        ASSERT_EQUAL(HttpEncodeQueryValue("!"), "!", "Reserved sub-delim '!' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue("$"), "$", "Reserved sub-delim '$' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("!"), "%21", "Reserved sub-delim '!' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("$"), "%24", "Reserved sub-delim '$' should be percent encoded (http query string encoding)");
         ASSERT_EQUAL(HttpEncodeQueryValue("%"), "%25", "Reserved sub-delim '%' should be percent encoded (http query string encoding)");
         //  - '&' is the query arg separator
         ASSERT_EQUAL(HttpEncodeQueryValue("&"), "%26", "Reserved sub-delim '&' should be percent encoded (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue("'"), "'", "Reserved sub-delim ''' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue("("), "(", "Reserved sub-delim '(' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue(")"), ")", "Reserved sub-delim ')' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue("*"), "*", "Reserved sub-delim '*' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("'"), "%27", "Reserved sub-delim ''' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("("), "%28", "Reserved sub-delim '(' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue(")"), "%29", "Reserved sub-delim ')' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("*"), "%2A", "Reserved sub-delim '*' should be percent encoded (http query string encoding)");
         //  - '+' has to be encoded in query strings because spaces historically
         //    were convereted to '+'.
         ASSERT_EQUAL(HttpEncodeQueryValue("+"), "%2B", "Reserved sub-delim '+' should be percent encoded (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue(","), ",", "Reserved sub-delim ',' should be a nop (http query string encoding)");
-        ASSERT_EQUAL(HttpEncodeQueryValue(";"), ";", "Reserved sub-delim ';' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue(","), "%2C", "Reserved sub-delim ',' should be percent encoded (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue(";"), "%3B", "Reserved sub-delim ';' should be percent encoded (http query string encoding)");
         //  - '=' is the key=value separator, but is safe in the values
-        ASSERT_EQUAL(HttpEncodeQueryValue("="), "=", "Reserved sub-delim '=' should be a nop (http query string encoding)");
+        ASSERT_EQUAL(HttpEncodeQueryValue("="), "%3D", "Reserved sub-delim '=' should be percent encoded (http query string encoding)");
 
 
         // Try to cover a reasonable set of non-unreserved

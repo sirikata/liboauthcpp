@@ -81,6 +81,11 @@ public:
             "a=2&d=baz&oauth_consumer_key=wwwwxxxxyyyyzzzz&oauth_nonce=139026898664&oauth_signature=yqbgvxoqF0eyFqNGUaivRRRld8U%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1390268986&oauth_token=aaaabbbbccccdddd&oauth_version=1.0&z=1",
             "Validate simple PUT request with unordered parameters signature"
         );
+        ASSERT_EQUAL(
+            oauth.getURLQueryString(OAuth::Http::Post, "resource?z=1&a=2&l=-74%2C40%2C-73%2C41"),
+            "a=2&l=-74%2C40%2C-73%2C41&oauth_consumer_key=wwwwxxxxyyyyzzzz&oauth_nonce=139026898664&oauth_signature=QXyCmnX%2FL3OR6wQ9HpZGrTk7ZG0%3D&oauth_signature_method=HMAC-SHA1&oauth_timestamp=1390268986&oauth_token=aaaabbbbccccdddd&oauth_version=1.0&z=1",
+            "Validate simple POST request with sub-delimiter character ','"
+        );
     }
 };
 
