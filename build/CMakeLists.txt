@@ -34,7 +34,7 @@ PROJECT(liboauthcpp C CXX)
 ENABLE_LANGUAGE(C)
 
 # Disable some annoying, unnecessary Windows warnings. Enable unwinding for exception handlers.
-IF(WIN32)
+IF(MSVC)
   ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS -EHsc)
   SET(CMAKE_CXX_FLAGS "-D_CRT_SECURE_NO_WARNINGS -D_SCL_SECURE_NO_WARNINGS")
 ENDIF()
