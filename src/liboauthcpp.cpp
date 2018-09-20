@@ -435,9 +435,10 @@ bool Client::getSignature( const Http::RequestType eType,
 std::string Client::getHttpHeader(const Http::RequestType eType,
     const std::string& rawUrl,
     const std::string& rawData,
+    const KeyValuePairs& additional_keys,
     const bool includeOAuthVerifierPin) const
 {
-    return Defaults::AUTHHEADER_PREFIX + buildOAuthParameterString(AuthorizationHeaderString, eType, rawUrl, rawData, includeOAuthVerifierPin);
+    return Defaults::AUTHHEADER_PREFIX + buildOAuthParameterString(AuthorizationHeaderString, eType, rawUrl, rawData, includeOAuthVerifierPin, additional_keys);
 }
 
 std::string Client::getFormattedHttpHeader(const Http::RequestType eType,
@@ -461,7 +462,8 @@ std::string Client::buildOAuthParameterString(
     const Http::RequestType eType,
     const std::string& rawUrl,
     const std::string& rawData,
-    const bool includeOAuthVerifierPin) const
+    const bool includeOAuthVerifierPin,
+    const KeyValuePairs& additionalKeyPairs) const
 {
     KeyValuePairs rawKeyValuePairs;
     std::string rawParams;
@@ -475,7 +477,7 @@ std::string Client::buildOAuthParameterString(
     bool do_urlencode;
     if (string_type == AuthorizationHeaderString) {
         separator = ",";
-        do_urlencode = false;
+        do_urlencode = true;
     }
     else { // QueryStringString
         separator = "&";
@@ -496,6 +498,9 @@ std::string Client::buildOAuthParameterString(
         std::string dataPart = rawUrl.substr( nPos + 1 );
         rawKeyValuePairs = ParseKeyValuePairs(dataPart);
     }
+
+    for(const auto& x : additionalKeyPairs)
+         rawKeyValuePairs.insert(x);
 
     // NOTE: We always request URL encoding on the first pass so that the
     // signature generation works properly. This *relies* on
@@ -532,6 +537,9 @@ std::string Client::buildOAuthParameterString(
         oauth_keys.push_back(Defaults::TOKEN_KEY);
         oauth_keys.push_back(Defaults::VERIFIER_KEY);
         oauth_keys.push_back(Defaults::VERSION_KEY);
+
+        for(const auto& x : additionalKeyPairs)
+             oauth_keys.push_back(x.first);
 
         for(size_t i = 0; i < oauth_keys.size(); i++) {
             assert(rawKeyValuePairs.count(oauth_keys[i]) <= 1);

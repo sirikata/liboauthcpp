@@ -203,8 +203,10 @@ public:
     std::string getHttpHeader(const Http::RequestType eType,
                          const std::string& rawUrl,
                          const std::string& rawData = "",
+                         const KeyValuePairs& additional_keys = {},
                          const bool includeOAuthVerifierPin = false) const;
-    /** Build an OAuth HTTP header for the given request. This version gives a
+
+     /** Build an OAuth HTTP header for the given request. This version gives a
      *  fully formatted header, i.e. including the header field name.
      *
      *  \param eType the HTTP request type, e.g. GET or POST
@@ -270,7 +272,8 @@ private:
         const Http::RequestType eType,
         const std::string& rawUrl,
         const std::string& rawData,
-        const bool includeOAuthVerifierPin) const;
+        const bool includeOAuthVerifierPin,
+        const KeyValuePairs& additionalKeyPairs = {}) const;
 
     bool getSignature( const Http::RequestType eType, /* in */
                        const std::string& rawUrl, /* in */
