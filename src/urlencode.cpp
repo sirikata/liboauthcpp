@@ -94,7 +94,7 @@ std::string urlencode( const std::string &s, URLEncodeType enctype)
                 break;
 
             default:
-                assert(false && 'Unknown urlencode type');
+                assert(false && "Unknown urlencode type");
                 break;
         }
     }
