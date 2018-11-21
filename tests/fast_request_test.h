@@ -42,7 +42,7 @@ public:
         std::vector<std::string> queries;
         // Just save the output here so we can generate as many as quickly as we
         // can, hopefully increasing the likelihood of duplicates.
-        int ntests = 25000;
+        int ntests = 1000;
         for(int i = 0; i < ntests; i++) {
             queries.push_back(oauth.getURLQueryString(OAuth::Http::Head, resource));
         }
