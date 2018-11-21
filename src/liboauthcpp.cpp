@@ -13,6 +13,9 @@ namespace Defaults
     /* Constants */
     const int BUFFSIZE = 1024;
     const int BUFFSIZE_LARGE = 1024;
+
+    const std::string OAUTH_PARAMETER_PREFIX = "oauth_";
+
     const std::string CONSUMERKEY_KEY = "oauth_consumer_key";
     const std::string CALLBACK_KEY = "oauth_callback";
     const std::string VERSION_KEY = "oauth_version";
@@ -506,7 +509,7 @@ std::string Client::buildOAuthParameterString(
     // request type.
     std::string nonce;
     std::string timeStamp;
-    
+
     generateNonceTimeStamp(nonce, timeStamp);
 
     /* Build key-value pairs needed for OAuth request token, without signature */
@@ -523,21 +526,11 @@ std::string Client::buildOAuthParameterString(
      */
     if (string_type == AuthorizationHeaderString) {
         KeyValuePairs oauthKeyValuePairs;
-        std::vector<std::string> oauth_keys;
-        oauth_keys.push_back(Defaults::CONSUMERKEY_KEY);
-        oauth_keys.push_back(Defaults::NONCE_KEY);
-        oauth_keys.push_back(Defaults::SIGNATURE_KEY);
-        oauth_keys.push_back(Defaults::SIGNATUREMETHOD_KEY);
-        oauth_keys.push_back(Defaults::TIMESTAMP_KEY);
-        oauth_keys.push_back(Defaults::TOKEN_KEY);
-        oauth_keys.push_back(Defaults::VERIFIER_KEY);
-        oauth_keys.push_back(Defaults::VERSION_KEY);
-
-        for(size_t i = 0; i < oauth_keys.size(); i++) {
-            assert(rawKeyValuePairs.count(oauth_keys[i]) <= 1);
-            KeyValuePairs::iterator oauth_key_it = rawKeyValuePairs.find(oauth_keys[i]);
-            if (oauth_key_it != rawKeyValuePairs.end())
-                ReplaceOrInsertKeyValuePair(oauthKeyValuePairs, oauth_keys[i], oauth_key_it->second);
+        for(KeyValuePairs::iterator oauth_keys_it = rawKeyValuePairs.begin(); oauth_keys_it != rawKeyValuePairs.end(); oauth_keys_it++) {
+            if (oauth_keys_it->first.substr(0, Defaults::OAUTH_PARAMETER_PREFIX.size()) == Defaults::OAUTH_PARAMETER_PREFIX) {
+                assert(rawKeyValuePairs.count(oauth_keys_it->first) <= 1);
+                ReplaceOrInsertKeyValuePair(oauthKeyValuePairs, oauth_keys_it->first, oauth_keys_it->second);
+            }
         }
         getStringFromOAuthKeyValuePairs( oauthKeyValuePairs, rawParams, separator );
     }
