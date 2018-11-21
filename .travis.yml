@@ -26,3 +26,8 @@ script:
   - cmake .
   - make
   - make test
+
+# Only build master, and only build PR branches once
+branches:
+  only:
+  - master
